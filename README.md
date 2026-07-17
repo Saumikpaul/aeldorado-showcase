@@ -143,4 +143,4 @@ Aeldorado's full architecture solo (backend, agent orchestration, search
 grounding, billing, admin tooling, MCP integration) alongside **D-Dey PMS**,
 a pharmacy management system also built by Solanacy.
 
-Open to opportunities — reach out at **[your email]**.
+Open to opportunities — reach out at **saumikpaul@solanacy.in**.
