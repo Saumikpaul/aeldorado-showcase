@@ -1,8 +1,8 @@
 // core/claim-verification.js — Post-Generation Claim Verification Loop
 // Aeldorado by Solanacy Technologies
 //
-// PHASE 1 of the Research agent power-up plan: turn single-pass grounded
-// generation into a self-checking pipeline. Every [N]-cited claim in a
+// A self-checking pipeline layered on top of single-pass grounded
+// generation. Every [N]-cited claim in a
 // grounded answer gets checked against the ACTUAL fetched content of
 // SOURCE N — not re-asked to the same model that wrote the claim, and not
 // trusted just because a citation marker is present.

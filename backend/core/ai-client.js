@@ -31,13 +31,13 @@ const PROVIDER_FACTORIES = {
         // Enforce valid JSON at the API level rather than hoping the model
         // follows a "respond in JSON" prompt instruction. This matters most
         // on creative/long-form tasks (e.g. "write me an email template") —
-        // confirmed in production: Sales agent asked to write a cold-email
-        // template returned plain-text commentary about the template with
-        // no JSON structure at all, so safeExtractJSON's fallback dropped
-        // the entire `data` object and very likely the template text itself
-        // got mixed into unstructured prose instead of a clean `response`
-        // field. responseMimeType makes the model structurally unable to
-        // return non-JSON, regardless of how demanding the rest of the task is.
+        // a Sales agent asked to write a cold-email template can otherwise
+        // return plain-text commentary about the template with no JSON
+        // structure at all, so safeExtractJSON's fallback drops the entire
+        // `data` object and the template text itself risks getting mixed
+        // into unstructured prose instead of a clean `response` field.
+        // responseMimeType makes the model structurally unable to return
+        // non-JSON, regardless of how demanding the rest of the task is.
         if (jsonMode) {
           config.responseMimeType = "application/json";
         }

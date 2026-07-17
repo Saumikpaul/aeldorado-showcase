@@ -383,10 +383,8 @@ app.listen(PORT, () => {
   // Also keep our self-hosted metasearch instance warm on the same
   // interval — otherwise Render's free tier spins it down when idle, and
   // the first live-search request after a spin-down times out waiting for
-  // cold start (confirmed in production logs: "Meta-search fetch failed...
-  // Timeout" followed by a fallback all the way down to direct Google/
-  // DuckDuckGo scraping). Pinging its own /healthz keeps it warm without
-  // consuming a real search-engine query every 5 minutes.
+  // cold start. Pinging its own /healthz keeps it warm without consuming a
+  // real search-engine query every 5 minutes.
   const META_SEARCH_PING_URL = `${process.env.META_SEARCH_BASE_URL || "https://your-meta-search-instance.example.com"}/healthz`; // [REDACTED — internal infra URL not included in public showcase]
   const PING_INTERVAL = 5 * 60 * 1000; // 5 minutes
 

@@ -17,18 +17,19 @@ import { duckDuckGoSearch } from "./duckduckgo-search.js";
 import { fetchMultiple }    from "./web-fetcher.js";
 import { logger } from "./logger.js";
 
-// PHASE 2 — generic irrelevant-domain filter, applied uniformly to results
-// from ALL THREE engines (our metasearch engine, Google, DuckDuckGo) at one shared choke
-// point, rather than duplicating a filter inside each engine-specific file.
+// A generic irrelevant-domain filter, applied uniformly to results from
+// ALL THREE engines (our metasearch engine, Google, DuckDuckGo) at one
+// shared choke point, rather than duplicating a filter inside each
+// engine-specific file.
 //
-// Root cause this addresses (confirmed in production logs, 2026-07): a
-// factual query like "current RBI repo rate" returned real, correct
-// results ALONGSIDE completely irrelevant ones — dictionary.cambridge.org,
-// play.google.com, www.iciba.com — because the metasearch engine's own
-// isDictionaryResult() filter (meta-search.js) only catches a narrow
-// hostname list (dictionary.com, thesaurus.com, wiktionary.org) and has no
-// concept of "app store" or "translation portal" domains at all, and
-// Google/DuckDuckGo direct-scrape have no such filter whatsoever.
+// Root cause this addresses: a factual query like "current RBI repo rate"
+// can return real, correct results ALONGSIDE completely irrelevant ones —
+// dictionary.cambridge.org, play.google.com, www.iciba.com — because the
+// metasearch engine's own isDictionaryResult() filter (meta-search.js)
+// only catches a narrow hostname list (dictionary.com, thesaurus.com,
+// wiktionary.org) and has no concept of "app store" or "translation
+// portal" domains at all, and Google/DuckDuckGo direct-scrape have no
+// such filter whatsoever.
 //
 // This is intentionally NOT a"trustworthiness" ranking (that's a much
 // bigger, fuzzier claim — see classifyDomain() in grounded-search.js for
@@ -162,17 +163,16 @@ async function fetchSourcesFromResults(searchResult, engine, query) {
   // back to the search engine's own snippet for that URL rather than
   // dropping it entirely — a snippet is thin, but still real live data.
   if (sources.length === 0) {
-    // CRITICAL VISIBILITY FIX (found via live MCP test, 2026-07-07): this
-    // branch — every one of N candidate URLs failed to fetch usable content
-    // — previously had ZERO logging. A real production case hit exactly
-    // this: the metasearch engine returned real results for all 3 sub-queries (confirmed
-    // via the "engine result breakdown" logs), yet the final answer was
-    // "no live data found", with literally nothing in the logs between the
-    // last search-results log and the next unrelated request — this is
-    // that missing link. Logging WHY each candidate failed (not just that
-    // it did) so the actual cause — blocked/paywalled sites, non-HTML
-    // content-type, JS-rendered pages with no server-side content — is
-    // visible without needing to reproduce the failure again.
+    // This branch — every one of N candidate URLs failed to fetch usable
+    // content — is logged explicitly rather than silently, since a case
+    // where the metasearch engine returns real results for all sub-queries
+    // (visible via the "engine result breakdown" logs) yet the final
+    // answer is "no live data found" is otherwise indistinguishable from a
+    // search that genuinely found nothing. Logging WHY each candidate
+    // failed (not just that it did) so the actual cause — blocked/
+    // paywalled sites, non-HTML content-type, JS-rendered pages with no
+    // server-side content — is visible without needing to reproduce the
+    // failure again.
     logger.warn("Live search: all candidate URLs failed content extraction", {
       engine,
       query,

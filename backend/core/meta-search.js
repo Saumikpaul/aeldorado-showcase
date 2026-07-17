@@ -36,14 +36,11 @@ function fetchWithTimeout(url, options, timeoutMs) {
 }
 
 // Engines whose results are dictionary/translation/thesaurus lookups rather
-// than actual factual/current-event web results. Confirmed root cause of a
-// real bug (2026-07): factual queries like "USD to INR exchange rate" and
-// "who is the UK Prime Minister" were coming back with responses like "the
-// provided source materials were exclusively linguistic in nature" — the
-// query URL had no `categories` restriction, so the default "general"
-// category picked up a dictionary/Wiktionary-style engine alongside real web
-// engines, and that engine's word-definition result was sometimes the only
-// (or dominant) thing that made it into the response.
+// than actual factual/current-event web results. Without filtering, a
+// factual query (e.g. an exchange-rate or "who is the current PM" lookup)
+// can have its result slots dominated by a dictionary/Wiktionary-style
+// engine's word-definition result instead of real web content — the
+// default "general" category alone doesn't exclude these.
 //
 // Two layers of defense against this, since either one alone can fail:
 // 1. Restrict the request itself to categories that are actually useful for
@@ -52,18 +49,17 @@ function fetchWithTimeout(url, options, timeoutMs) {
 //    in case a dictionary-type engine is still reachable under a category we
 //    do request (e.g. it's tagged "general" AND "translate" simultaneously
 //    on this instance's config, and we still legitimately want "general").
-// PHASE 2/3 FIX (confirmed via production logs, 2026-07-07): the flat
-// "general,news,science" category set was originally added to fix a
-// dictionary-engine pollution bug (see comment above), but "science" pulls
-// in arxiv/semantic-scholar/pubmed for EVERY query regardless of topic —
-// for a business/market-research query ("EV charging infrastructure market
-// size", "funding rounds", "competitors"), these engines return academic
-// papers that are (a) topically irrelevant to a business question and (b)
-// frequently direct PDF links, which core/web-fetcher.js explicitly rejects
-// (`Unsupported content-type`) — so these results were silently occupying
-// result slots while contributing zero fetchable content, shrinking the
-// EFFECTIVE source pool for exactly the kind of broad business query
-// Phase 2's multi-query expansion targets.
+//
+// Category selection is also tuned by query type: a flat "general,news,
+// science" set means "science" pulls in arxiv/semantic-scholar/pubmed for
+// every query regardless of topic. For a business/market-research query
+// ("EV charging infrastructure market size", "funding rounds",
+// "competitors"), those engines return academic papers that are (a)
+// topically irrelevant and (b) frequently direct PDF links, which
+// core/web-fetcher.js explicitly rejects — so they occupy result slots
+// while contributing zero fetchable content, shrinking the effective
+// source pool for exactly the broad business queries this pipeline
+// targets.
 //
 // Fix: pick categories based on the query's own content — a cheap keyword
 // heuristic, not a model call, since "is this business/market-oriented vs

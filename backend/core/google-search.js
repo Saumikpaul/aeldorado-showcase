@@ -4,10 +4,10 @@
 // Hits Google's search result page using a real headless browser (Playwright),
 // not plain fetch(). No Serper/Tavily/Brave/Bing or any paid search API involved.
 //
-// WHY PLAYWRIGHT (not plain fetch): confirmed via production logs that Google
-// serves a "please enable JavaScript" interstitial to non-browser HTTP clients
-// instead of real results — a JS engine is required to pass that gate, not
-// just a convincing User-Agent header.
+// WHY PLAYWRIGHT (not plain fetch): Google serves a "please enable
+// JavaScript" interstitial to non-browser HTTP clients instead of real
+// results — a JS engine is required to pass that gate, not just a
+// convincing User-Agent header.
 //
 // HONEST LIMITS (documented, not hidden):
 // - Google can still detect and block headless browsers (fingerprinting,

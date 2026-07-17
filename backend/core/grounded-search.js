@@ -41,18 +41,18 @@ Respond with ONLY the single word true or false, nothing else.`;
 // per-call (not a module-load constant) so a long-running process never
 // serves a stale date of its own.
 //
-// FIX (2026-07-07): explicitly pinned to Asia/Kolkata (IST). Without a
-// timeZone override, new Date().toLocaleDateString() uses whatever
-// timezone the Node process itself runs in — Render's containers default
-// to UTC, not IST. Aeldorado is an India-focused product; for roughly 5.5
-// hours every day (UTC 18:30-23:59, i.e. IST 00:00-05:29), an
-// unpinned UTC stamp would report the WRONG calendar date relative to
-// India's actual "today" — one day behind. That's exactly the window
-// where every staleness/recency judgment in this file (gapDays
-// calculation, "is this source recent enough", "which source is most
-// recent") would be silently computed against the wrong reference date.
-// Confirmed via live testing that the container itself resolves to UTC
-// with no TZ override, so this can't be left to environment config alone.
+// Explicitly pinned to Asia/Kolkata (IST). Without a timeZone override,
+// new Date().toLocaleDateString() uses whatever timezone the Node process
+// itself runs in — Render's containers default to UTC, not IST. Aeldorado
+// is an India-focused product; for roughly 5.5 hours every day (UTC
+// 18:30-23:59, i.e. IST 00:00-05:29), an unpinned UTC stamp would report
+// the WRONG calendar date relative to India's actual "today" — one day
+// behind. That's exactly the window where every staleness/recency
+// judgment in this file (gapDays calculation, "is this source recent
+// enough", "which source is most recent") would be silently computed
+// against the wrong reference date. This can't be left to environment
+// config alone, since the container's own default timezone isn't
+// guaranteed to be IST.
 function currentDateStamp() {
   return new Date().toLocaleDateString("en-US", {
     weekday: "long", year: "numeric", month: "long", day: "numeric",
@@ -124,14 +124,14 @@ export function classifyDomain(url) {
   return null; // no strong signal either way — not worth guessing
 }
 
-// CODE-LEVEL RECENCY FIX (2026-07-07): previously, "find the most recent
-// source and prioritize it" was a PROMPT instruction only (rule 4 below) —
-// entirely the model's discretion to actually scan every source's date and
-// act on it. Confirmed via live testing: this failed in practice — a
-// present-tense question ("how should businesses act NOW") got answered
-// using an older source's figures without any staleness disclosure, even
-// though the rule explicitly required one. A discretionary instruction the
-// model can silently skip is not the same as an enforced behavior.
+// Recency handling is enforced in code rather than left purely to a
+// prompt instruction. "Find the most recent source and prioritize it" as
+// a prompt-only rule (rule 4 below) leaves it entirely to the model's
+// discretion to actually scan every source's date and act on it — a
+// discretionary instruction the model can silently skip is not the same
+// as an enforced behavior, and is prone to failure on present-tense
+// questions ("how should businesses act NOW") getting answered from an
+// older source's figures without any staleness disclosure.
 //
 // Fix: sort sources by parsed publishedDate (newest first) IN CODE before
 // they ever reach the prompt, and explicitly mark the most recent one. This
@@ -245,13 +245,13 @@ export const GROUNDED_CITATION_RULES = `GROUNDED-ANSWER RULES (apply whenever LI
  * turn into an early return, mirroring how research.js handles blocked/
  * no-data cases. Callers are expected to check `result.ok` first.
  *
- * PHASE 2: now goes through expandedLiveSearch (core/query-expansion.js)
- * instead of calling liveWebSearch directly. For simple/narrow tasks this
- * is IDENTICAL to the old behavior (single query, same liveWebSearch call
- * under the hood) — expandedLiveSearch only takes the multi-query path for
+ * Goes through expandedLiveSearch (core/query-expansion.js) instead of
+ * calling liveWebSearch directly. For simple/narrow tasks this is
+ * IDENTICAL to the single-query behavior (same liveWebSearch call under
+ * the hood) — expandedLiveSearch only takes the multi-query path for
  * tasks its own cheap classification call judges as genuinely broad, and
- * fails back to single-query on any error. ai/model are now required
- * params (previously unused by this function) purely so that
+ * fails back to single-query on any error. ai/model are required
+ * params purely so that
  * classification call can run; agentLabel continues to double as the log
  * label for both this function's own error logging and the expansion
  * module's.

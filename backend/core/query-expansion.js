@@ -1,10 +1,11 @@
 // core/query-expansion.js — Multi-Query Search Expansion
 // Aeldorado by Solanacy Technologies
 //
-// PHASE 2 of the Research agent power-up plan: a single search query is
-// often too narrow for a genuinely broad research task (e.g. "TAM for
-// electric scooters in India" really needs market-size data, competitor
-// pricing, AND recent funding/policy news — three different searches, not
+// Multi-query search expansion for the Research agent: a single search
+// query is often too narrow for a genuinely broad research task (e.g.
+// "TAM for electric scooters in India" really needs market-size data,
+// competitor pricing, and recent funding/policy news — three different
+// searches, not
 // one). This module decides whether a task needs more than one search
 // angle and, if so, proposes focused sub-queries, then runs them in
 // parallel and merges the results into one deduplicated source pool.
@@ -28,19 +29,20 @@ import { safeExtractJSON } from "./json-utils.js";
 import { getModelList } from "../agents/agent-utils.js";
 import { logger } from "./logger.js";
 
-// LOAD-REDUCTION FIX (2026-07-07, confirmed via production logs): our
-// self-hosted metasearch instance visibly struggles under concurrent multi-
-// query load — logs showed most secondary engines (Brave, DuckDuckGo,
-// Startpage, Wikipedia, Google Scholar) returning "too many requests" or
-// CAPTCHA-suspended on nearly every call once 3+ sub-queries ran in
-// parallel, each itself falling through a 3-engine (metasearch engine->Google->DDG)
-// chain on failure. Worst case: 1 user question could trigger up to
-// MAX_SUBQUERIES x 3 = 12 external search attempts. Capping at 2 sub-queries
-// halves that worst case and keeps concurrent metasearch load within what a
-// single free/self-hosted instance can actually sustain, while still
-// covering "genuinely two angles" tasks (the common case per EXPANSION_SYSTEM
-// below) — a task needing true 3-4-way breadth is rare enough that losing it
-// is a better trade than routinely starving the metasearch instance.
+// Sub-query concurrency is capped rather than unbounded. A self-hosted
+// metasearch instance visibly struggles under concurrent multi-query
+// load — secondary engines (Brave, DuckDuckGo, Startpage, Wikipedia,
+// Google Scholar) tend to return "too many requests" or go
+// CAPTCHA-suspended on nearly every call once 3+ sub-queries run in
+// parallel, each itself falling through a 3-engine (metasearch engine ->
+// Google -> DDG) chain on failure. Worst case: one user question could
+// trigger up to MAX_SUBQUERIES x 3 = 12 external search attempts. Capping
+// at 2 sub-queries halves that worst case and keeps concurrent metasearch
+// load within what a single free/self-hosted instance can actually
+// sustain, while still covering "genuinely two angles" tasks (the common
+// case per EXPANSION_SYSTEM below) — a task needing true 3-4-way breadth
+// is rare enough that losing it is a better trade than routinely
+// starving the metasearch instance.
 const MAX_SUBQUERIES = 2;
 
 // Caps total merged sources across all sub-queries before they're sent to
@@ -159,16 +161,16 @@ function interleaveSourceLists(sourceLists) {
  * @param {string} [params.model]
  * @param {string} [params.agentLabel]
  */
-// LOAD-REDUCTION FIX (2026-07-07): lowered from 15s. Production logs show
-// a fully-failing sub-query (metasearch engine timeout -> Google CAPTCHA-block ->
-// DuckDuckGo timeout) taking 20-25s end to end even before this outer
-// timeout fires — so 15s wasn't actually preventing the slow-failure case
-// it was meant to cap, it wasn't fully waiting either. Since a slow sub-
-// query is dead weight regardless of the outer cap's exact value, cutting
-// to 10s shaves latency off the common case (one bad sub-query dragging on
-// a mostly-successful multi-query call) without meaningfully changing which
+// Timeout is kept tight (10s) rather than looser: a fully-failing
+// sub-query (metasearch engine timeout -> Google CAPTCHA-block ->
+// DuckDuckGo timeout) can take 20-25s end to end even under an outer cap
+// — so a looser timeout doesn't meaningfully protect against the
+// slow-failure case it's meant to guard. Since a slow sub-query is dead
+// weight regardless of the outer cap's exact value, keeping it tight
+// shaves latency off the common case (one bad sub-query dragging on a
+// mostly-successful multi-query call) without meaningfully changing which
 // sub-queries actually succeed — most successful searches resolve well
-// under 10s per the "engine result breakdown" log timings observed.
+// under 10s.
 const SUBQUERY_TIMEOUT_MS = 10000;
 
 function withTimeout(promise, timeoutMs, fallbackValue) {
@@ -180,14 +182,14 @@ function withTimeout(promise, timeoutMs, fallbackValue) {
 
 const EMPTY_SEARCH_RESULT = { hasLiveData: false, sources: [], attemptedUrls: [], blocked: false, engine: "timeout" };
 
-// REVERTED (2026-07-07): time_range=year bias was tried here for
-// "is this still current" queries, but confirmed live to backfire — on a
-// legal query it pulled in generic recent NEWS (yahoo.com, aol.com,
-// nypost.com, reason.com) ahead of on-topic-but-not-dated legal sites,
-// because recency bias alone has no topic constraint. Replaced below with
-// a narrower, safer fix: for the Legal agent specifically, nudge the query
-// toward known-good Indian legal sites via the metasearch engine's site: OR-group syntax,
-// rather than biasing all results by date regardless of topic.
+// Recency-bias alone (time_range=year) was considered for "is this still
+// current" queries but rejected in favor of a narrower, safer approach:
+// pure recency bias has no topic constraint, so on a legal query it can
+// pull in generic recent news ahead of on-topic-but-not-dated legal
+// sites. The fix used instead: for the Legal agent specifically, nudge
+// the query toward known-good Indian legal sites via the metasearch
+// engine's site: OR-group syntax, rather than biasing all results by
+// date regardless of topic.
 // Site list deliberately avoids government domains (e.g. indiacode.gov.in)
 // despite being the most "authoritative" on paper — .gov.in sites are
 // commonly slow, occasionally down, and more prone to bot-blocking/CAPTCHA
@@ -197,25 +199,24 @@ const EMPTY_SEARCH_RESULT = { hasLiveData: false, sources: [], attemptedUrls: []
 // sites that the metasearch engine can reliably fetch:
 const LEGAL_SITE_FOCUS = "(site:devgan.in OR site:indiankanoon.org OR site:scconline.com OR site:lawrato.com OR site:vakeel360.com OR site:barandbench.com OR site:livelaw.in)";
 
-// Same reasoning as LEGAL_SITE_FOCUS, applied to Research: confirmed via
-// live testing that a plain business/market query with no domain focus at
-// all can return irrelevant sources (US local newspapers, insurance
-// company sites) instead of business/market-research content. These are
-// general business/market/finance sites, not India-only like Legal's list,
-// since Research fields much broader topics than Legal does. Deliberately
-// excludes government/official-statistics domains (e.g. mospi.gov.in) for
-// the same reason as Legal's list — more prone to slow responses/bot-
-// blocking than commercial sites, working against fresh+scrapable results.
+// Same reasoning as LEGAL_SITE_FOCUS, applied to Research: a plain
+// business/market query with no domain focus at all can return irrelevant
+// sources (US local newspapers, insurance company sites) instead of
+// business/market-research content. These are general business/market/
+// finance sites, not India-only like Legal's list, since Research fields
+// much broader topics than Legal does. Deliberately excludes government/
+// official-statistics domains (e.g. mospi.gov.in) for the same reason as
+// Legal's list — more prone to slow responses/bot-blocking than
+// commercial sites, working against fresh+scrapable results.
 //
-// EXPANDED (2026-07-07): the original 7-domain list correctly killed junk
-// sources but was too narrow for niche/vertical topics (e.g. SaaS pricing
-// benchmarks specifically) — confirmed live, a query for B2B SaaS pricing
-// benchmarks returned only tangentially-related content from these general
-// finance-news sites, not the actual benchmark data. Verified via direct
-// web search which sites carry that kind of specialized, frequently-
-// updated content before adding them — deliberately EXCLUDED several
-// results that looked relevant on the surface but turned out to be
-// self-promotional agency/lead-gen SEO content (growthspreeofficial.com,
+// The domain list is broad enough to cover niche/vertical topics (e.g.
+// SaaS pricing benchmarks specifically), not just general finance-news
+// sites, since a narrower list tends to return only tangentially-related
+// content for specialized queries rather than the actual benchmark data.
+// Sites were vetted via direct web search before inclusion, deliberately
+// excluding some results that looked relevant on the surface but turned
+// out to be self-promotional agency/lead-gen SEO content
+// (growthspreeofficial.com,
 // cookleads.com) rather than genuine primary research, since adding those
 // would reintroduce exactly the "confidently-stated but non-authoritative"
 // problem this whole session has been fixing. Added only sources with a
@@ -258,14 +259,12 @@ export async function expandedLiveSearch({ task, searchQuery, ai, model, agentLa
   };
 
   if (!plan.needsExpansion) {
-    // QUERY-TIGHTENING FIX (2026-07-07): confirmed via live testing that a
-    // long natural-language searchQuery (e.g. a full sentence the user
-    // typed) sent to the metasearch engine as-is returns weaker/more irrelevant results
-    // than a short keyword-dense query on the exact same topic — the
-    // EXPANSION_SYSTEM prompt already produces tight 3-8 word queries for
-    // the needsExpansion=true branch, but the false branch previously fell
-    // straight through to the raw, untightened searchQuery with no
-    // refinement step at all. plan.tightenedQuery reuses the same single
+    // A long natural-language searchQuery (e.g. a full sentence the user
+    // typed) sent to the metasearch engine as-is tends to return weaker/more
+    // irrelevant results than a short keyword-dense query on the exact same
+    // topic — the EXPANSION_SYSTEM prompt already produces tight 3-8 word
+    // queries for the needsExpansion=true branch, so this branch applies
+    // the same tightening: plan.tightenedQuery reuses the same single
     // model call above (no added latency/cost) — falls back to the
     // original searchQuery whenever tightenedQuery is empty (model omitted
     // it, or the whole planQueries call failed and fell back safely).
@@ -275,17 +274,18 @@ export async function expandedLiveSearch({ task, searchQuery, ai, model, agentLa
 
   logger.info(`${agentLabel} agent: multi-query search expansion`, { subQueries: plan.queries });
 
-  // LOAD-REDUCTION FIX (2026-07-07): sub-queries use metaSearchOnlySearch, not
-  // liveWebSearch's full metasearch-engine->Google->DuckDuckGo fallback chain. Running
-  // N sub-queries in parallel, each independently retrying through all 3
-  // engines on failure, is what pushed a single research question to up to
-  // MAX_SUBQUERIES x 3 external search attempts and made one slow/failing
-  // sub-query take 20+ seconds even after this file's own SUBQUERY_TIMEOUT_MS
-  // fires. Redundancy already exists at the sub-query level (2 independent
-  // angles); adding a full 3-engine retry chain to EACH one compounds load
-  // without a proportional accuracy gain. If the metasearch engine alone comes back empty
-  // for a given sub-query, that sub-query simply contributes zero sources —
-  // the other sub-quer(y/ies) and the interleave/merge step below absorb it.
+  // Sub-queries use metaSearchOnlySearch, not liveWebSearch's full
+  // metasearch-engine -> Google -> DuckDuckGo fallback chain. Running N
+  // sub-queries in parallel, each independently retrying through all 3
+  // engines on failure, would push a single research question up to
+  // MAX_SUBQUERIES x 3 external search attempts and let one slow/failing
+  // sub-query take 20+ seconds even after this file's own
+  // SUBQUERY_TIMEOUT_MS fires. Redundancy already exists at the sub-query
+  // level (2 independent angles); adding a full 3-engine retry chain to
+  // each one would compound load without a proportional accuracy gain. If
+  // the metasearch engine alone comes back empty for a given sub-query,
+  // that sub-query simply contributes zero sources — the other
+  // sub-quer(y/ies) and the interleave/merge step below absorb it.
   const results = await Promise.allSettled(
     plan.queries.map(q => withTimeout(metaSearchOnlySearch({ query: focusedQuery(q) }), SUBQUERY_TIMEOUT_MS, EMPTY_SEARCH_RESULT))
   );
@@ -332,14 +332,13 @@ export async function expandedLiveSearch({ task, searchQuery, ai, model, agentLa
     dedupedSources = fallbackResult.sources || [];
   }
 
-  // VISIBILITY FIX (found via live MCP test, 2026-07-07): previously there
-  // was no log line at all connecting "these sub-queries ran" to "here's
-  // the final merged source count" — a real production case showed all 3
-  // sub-queries individually returning real metasearch results, then total
-  // silence, then a "no live data found" answer, with no way to tell from
-  // logs alone whether the problem was the search stage, the fetch stage,
-  // or the merge stage. This makes the merge outcome explicit regardless of
-  // whether it succeeded or came back empty.
+  // Explicit log line connecting "these sub-queries ran" to "here's the
+  // final merged source count" — without it, a case where all sub-queries
+  // individually return real metasearch results but the final answer is
+  // "no live data found" is hard to diagnose, since there's no way to
+  // tell from logs alone whether the problem was the search stage, the
+  // fetch stage, or the merge stage. This makes the merge outcome
+  // explicit regardless of whether it succeeded or came back empty.
   logger.info(`${agentLabel} agent: multi-query search merge result`, {
     subQueries: plan.queries,
     perQueryContribution: plan.queries.map((q, i) => ({ query: q, sourcesFound: (perQuerySourceLists[i] || []).length })),

@@ -52,17 +52,15 @@ export async function runResearchAgent({ task, rawMessage, ai, model, options = 
     };
   }
 
-  // PHASE 2 FIX (confirmed via production logs, 2026-07-07): a real
-  // multi-query-expansion call with a merged, deduped pool of sources from
-  // 2-3 sub-queries took 29s to generate and still got cut off mid-JSON —
-  // "Failed to extract JSON from AI response" — the same failure mode the
-  // 4096->8192 bump above was already fixing for, just re-triggered at a
-  // higher source count than 8192 was sized for. A flat ceiling can't cover
-  // both a 1-source single-query answer and a 10-source (MAX_MERGED_SOURCES
-  // in query-expansion.js) multi-query synthesis well — this scales with
-  // how much source material the model actually has to work through and
-  // cite from, capped so a pathological source count can't runaway the
-  // token budget (and cost) unbounded.
+  // Output token budget scales with source count rather than staying
+  // fixed. A flat ceiling can't cover both a 1-source single-query answer
+  // and a 10-source (MAX_MERGED_SOURCES in query-expansion.js) multi-query
+  // synthesis well — a synthesis over a large, deduped multi-query source
+  // pool needs meaningfully more room to cite from than a single-source
+  // answer does, or generation gets cut off mid-JSON. This scales with how
+  // much source material the model actually has to work through and cite
+  // from, capped so a pathological source count can't runaway the token
+  // budget (and cost) unbounded.
   const sourceCount = search.sources.length;
   const scaledMaxTokens = Math.min(8192 + Math.max(0, sourceCount - 5) * 600, 16384);
 
@@ -71,10 +69,10 @@ export async function runResearchAgent({ task, rawMessage, ai, model, options = 
     config: {
       systemInstruction: RESEARCH_SYSTEM,
       temperature: options.temperature || 0.4,
-      // Grounded research answers are now expected to cite every claim
+      // Grounded research answers are expected to cite every claim
       // against real live sources, which makes them meaningfully longer
-      // than un-grounded answers. 4096 was truncating valid JSON mid-response
-      // (confirmed in production) before the model could close its own
+      // than un-grounded answers. A lower token budget risks truncating
+      // valid JSON mid-response before the model can close its own
       // markdown fence / closing brace, making safeExtractJSON's fence and
       // brace-matching strategies both fail on otherwise-valid output.
       maxOutputTokens: options.max_tokens || scaledMaxTokens,
@@ -86,8 +84,8 @@ export async function runResearchAgent({ task, rawMessage, ai, model, options = 
 
   const rawText = (response.text || "").trim();
 
-  // Guard against a genuinely empty/whitespace-only model response (seen in
-  // production: Gemini occasionally returns just "\n" with no error). Without
+  // Guard against a genuinely empty/whitespace-only model response (some
+  // providers occasionally return just a newline with no error). Without
   // this check, safeExtractJSON's own fallback would carry that blank text
   // straight through to `response`, and the user gets a silent empty reply
   // with no indication anything went wrong.
@@ -106,8 +104,8 @@ export async function runResearchAgent({ task, rawMessage, ai, model, options = 
   }
 
   // Fallback for when safeExtractJSON's own parsing strategies all fail
-  // (e.g. a response truncated mid-JSON by hitting maxOutputTokens, seen in
-  // production wrapped in an unclosed ```json fence). Strip any leading
+  // (e.g. a response truncated mid-JSON by hitting maxOutputTokens,
+  // possibly wrapped in an unclosed ```json fence). Strip any leading
   // fence marker so raw JSON syntax never reaches the user, and surface a
   // clear message rather than a wall of malformed JSON text.
   const cleanedForDisplay = rawText.replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/i, "").trim();
@@ -131,7 +129,7 @@ export async function runResearchAgent({ task, rawMessage, ai, model, options = 
   // list IS the citation index.
   parsed.sources = search.sources.map(s => s.url);
 
-  // PHASE 1 — verification loop. Runs BEFORE appendSourceList so the
+  // Verification loop. Runs BEFORE appendSourceList so the
   // claim-extraction regex only sees the model's own prose and [N] markers,
   // not the appended "Sources:\n[1] domain.com" list (which would otherwise
   // get misread as more cited claims). Uses search.sources (not parsed.sources
