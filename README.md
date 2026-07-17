@@ -8,8 +8,7 @@
 > without exposing the actual IP. The live product runs the full,
 > unredacted version.
 >
-> The **internal admin portal** (user management, ban/suspend controls,
-> broadcast messaging, audit logs) and the **abuse-detection/user-control
+> The **internal admin portal** and the **abuse-detection/user-control
 > internals** (`core/anti-abuse.js` — device fingerprinting, IP-sharing
 > thresholds, suspension mechanics) are **excluded entirely** from this
 > public repo, not just redacted — publishing exact moderation mechanics
@@ -19,8 +18,8 @@ Built solo by **Saumik Paul**, Founder of **Solanacy Technologies**.
 
 - 🌐 Live product: [aeldorado.solanacy.in](https://aeldorado.solanacy.in)
 - 📡 API: [api.aeldorado.solanacy.in](https://api.aeldorado.solanacy.in)
-- 📧 Contact: **[your contact email here]**
-- 💳 Pricing: **[link to pricing page here]**
+- 📧 Contact: **aeldorado@solanacy.in**
+- 💳 Pricing: **aeldorado.solanacy.in/#pricing**
 - 🎥 Demo video: **[embed / link here]**
 
 ---
