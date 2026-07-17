@@ -4,6 +4,18 @@
   "type": "module",
   "description": "Aeldorado — The Legendary Intelligence. Public AI API Platform by Solanacy Technologies.",
   "main": "server.js",
+  "license": "UNLICENSED",
+  "author": {
+    "name": "Saumik Paul",
+    "email": "aeldorado@solanacy.in",
+    "url": "https://aeldorado.solanacy.in"
+  },
+  "homepage": "https://aeldorado.solanacy.in",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Saumikpaul/aeldorado-showcase.git"
+  },
+  "private": true,
   "scripts": {
     "start": "PLAYWRIGHT_BROWSERS_PATH=0 node server.js",
     "dev": "node --watch server.js",

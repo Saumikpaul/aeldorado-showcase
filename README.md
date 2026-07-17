@@ -1,5 +1,14 @@
 # Aeldorado — Multi-Agent AI API Platform (Public Showcase)
 
+![Status](https://img.shields.io/badge/status-showcase--only-orange)
+![License](https://img.shields.io/badge/license-UNLICENSED-red)
+![Node.js](https://img.shields.io/badge/Node.js-20%2B-339933?logo=node.js&logoColor=white)
+![Express](https://img.shields.io/badge/Express-4.x-000000?logo=express&logoColor=white)
+![Firebase](https://img.shields.io/badge/Firebase-Firestore-FFCA28?logo=firebase&logoColor=black)
+![Gemini](https://img.shields.io/badge/AI-Google%20Gemini-4285F4?logo=googlegemini&logoColor=white)
+![MCP](https://img.shields.io/badge/protocol-MCP%20%2B%20OAuth%202.0%20PKCE-8A2BE2)
+![Netlify](https://img.shields.io/badge/frontend-Netlify-00C7B7?logo=netlify&logoColor=white)
+
 > ⚠️ **This is a sanitized, public showcase copy of a production codebase.**
 > Core proprietary logic — agent system prompts, scoring algorithms, and
 > internal business rules — has been redacted (clearly marked
@@ -143,4 +152,4 @@ Aeldorado's full architecture solo (backend, agent orchestration, search
 grounding, billing, admin tooling, MCP integration) alongside **D-Dey PMS**,
 a pharmacy management system also built by Solanacy.
 
-Open to opportunities — reach out at **saumikpaul@solanacy.in**.
+Open to opportunities — reach out at **aeldorado@solanacy.in**.
