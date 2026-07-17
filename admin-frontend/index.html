@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Aeldorado</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="stylesheet" href="/css/theme.css" />
+  <link rel="stylesheet" href="/css/admin.css" />
+</head>
+<body>
+
+  <div class="status-rail" id="status-rail"></div>
+
+  <!-- Login Screen -->
+  <div class="login-screen" id="login-screen">
+    <div class="login-card">
+      <div class="login-mark">
+        <svg viewBox="0 0 32 32" fill="none" width="26" height="26">
+          <defs>
+            <linearGradient id="lg-login-outer" x1="0" y1="0" x2="32" y2="32">
+              <stop stop-color="#3b82f6" offset="0%"/>
+              <stop stop-color="#7c3aed" offset="100%"/>
+            </linearGradient>
+          </defs>
+          <path d="M16 3L3 27h6l7-13 7 13h6L16 3z" fill="url(#lg-login-outer)"/>
+          <path d="M16 16l-3.5 6.5h7L16 16z" fill="#ffffff" opacity="0.92"/>
+        </svg>
+      </div>
+      <div class="login-title">Aeldorado Admin</div>
+      <p class="login-sub">
+        Internal control room. Access is restricted to a single account —
+        every other account is blocked at the server.
+      </p>
+      <button class="btn btn-primary btn-block btn-lg" id="login-btn">Continue with Google</button>
+      <div class="login-error" id="login-error"></div>
+    </div>
+  </div>
+
+  <!-- Admin Shell -->
+  <div class="admin-shell" id="admin-shell">
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <span class="brand-logo-svg">
+          <svg viewBox="0 0 32 32" fill="none" width="20" height="20">
+            <defs>
+              <linearGradient id="lg-admin-sb-outer" x1="0" y1="0" x2="32" y2="32">
+                <stop stop-color="#3b82f6" offset="0%"/>
+                <stop stop-color="#7c3aed" offset="100%"/>
+              </linearGradient>
+            </defs>
+            <path d="M16 3L3 27h6l7-13 7 13h6L16 3z" fill="url(#lg-admin-sb-outer)"/>
+            <path d="M16 16l-3.5 6.5h7L16 16z" fill="#ffffff" opacity="0.92"/>
+          </svg>
+        </span>
+        Aeldorado
+      </div>
+      <div class="sidebar-brand-sub">Admin</div>
+
+      <ul class="nav-list">
+        <li><button class="nav-item active" data-view="overview">Overview</button></li>
+        <li><button class="nav-item" data-view="users">Users</button></li>
+        <li><button class="nav-item" data-view="broadcasts">Broadcasts</button></li>
+        <li><button class="nav-item" data-view="newsroom">Newsroom</button></li>
+        <li><button class="nav-item" data-view="logs">Request logs</button></li>
+        <li><button class="nav-item" data-view="access-log">Access log</button></li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <div class="admin-identity" id="admin-identity"></div>
+        <button class="btn btn-outline btn-sm btn-block" id="signout-btn">Sign out</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div id="view-overview" class="view active">
+        <div class="main-header">
+          <div class="main-title">Overview</div>
+          <div class="main-sub">Live snapshot across all users and today's traffic.</div>
+        </div>
+      </div>
+
+      <div id="view-users" class="view">
+        <div class="main-header">
+          <div class="main-title">Users</div>
+          <div class="main-sub">All registered accounts, newest first.</div>
+        </div>
+      </div>
+
+      <div id="view-broadcasts" class="view">
+        <div class="main-header">
+          <div class="main-title">Broadcasts</div>
+          <div class="main-sub">Send a message to every logged-in user's dashboard.</div>
+        </div>
+      </div>
+
+      <div id="view-newsroom" class="view">
+        <div class="main-header">
+          <div class="main-title">Newsroom</div>
+          <div class="main-sub">Write and publish posts to the public /news page.</div>
+        </div>
+      </div>
+
+      <div id="view-newsroom-editor" class="view">
+        <div class="main-header">
+          <button class="btn btn-ghost btn-sm" id="back-to-newsroom">← Back to Newsroom</button>
+        </div>
+      </div>
+
+      <div id="view-user-detail" class="view">
+        <div class="main-header">
+          <button class="btn btn-ghost btn-sm" id="back-to-users">← Back to users</button>
+        </div>
+      </div>
+
+      <div id="view-logs" class="view">
+        <div class="main-header">
+          <div class="main-title">Request logs</div>
+          <div class="main-sub">Every API call across all users, newest first.</div>
+        </div>
+      </div>
+
+      <div id="view-access-log" class="view">
+        <div class="main-header">
+          <div class="main-title">Access log</div>
+          <div class="main-sub">Unauthorized attempts to reach the admin API.</div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Confirm Modal -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-title" id="modal-title"></div>
+      <div class="modal-body" id="modal-body"></div>
+      <div class="modal-actions">
+        <button class="btn btn-outline" id="modal-cancel">Cancel</button>
+        <button class="btn btn-danger" id="modal-confirm">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>

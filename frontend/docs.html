@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Documentation — Aeldorado by Solanacy Technologies</title>
+  <link rel="icon" type="image/png" href="/assets/aeldorado.png" />
+  <link rel="apple-touch-icon" href="/assets/aeldorado.png" />
+  <meta name="description" content="Aeldorado API documentation. Integrate 7 specialized AI agents into your application with one unified API." />
+  <link rel="canonical" href="https://aeldorado.solanacy.in/docs" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Aeldorado" />
+  <meta property="og:title" content="API Documentation — Aeldorado by Solanacy Technologies" />
+  <meta property="og:description" content="Aeldorado API documentation. Integrate 7 specialized AI agents into your application with one unified API." />
+  <meta property="og:url" content="https://aeldorado.solanacy.in/docs" />
+  <meta property="og:image" content="https://aeldorado.solanacy.in/assets/og-banner.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="en_US" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="API Documentation — Aeldorado by Solanacy Technologies" />
+  <meta name="twitter:description" content="Aeldorado API documentation. Integrate 7 specialized AI agents into your application with one unified API." />
+  <meta name="twitter:image" content="https://aeldorado.solanacy.in/assets/og-banner.png" />
+
+  <meta name="robots" content="index, follow" />
+  <link rel="stylesheet" href="/css/legal.css" />
+  <script>
+    // Detect if this page is embedded inside the app shell's iframe
+    // (e.g. /app/:uid/docs) so we can hide the duplicate top nav + footer.
+    if (window.self !== window.top) {
+      document.documentElement.classList.add('is-embedded');
+    }
+  </script>
+  <style>
+    .is-embedded nav,
+    .is-embedded footer { display: none !important; }
+    .is-embedded .docs-layout { padding-top: 24px; }
+    .is-embedded .docs-sidebar { top: 24px; max-height: calc(100vh - 48px); }
+    /* ── Docs Layout ─────────────────────────────────────── */
+    .docs-layout {
+      display: flex;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 88px 24px 80px;
+      gap: 48px;
+      align-items: flex-start;
+    }
+
+    /* ── Sidebar ─────────────────────────────────────────── */
+    .docs-sidebar {
+      width: 220px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 88px;
+      max-height: calc(100vh - 108px);
+      overflow-y: auto;
+    }
+    .docs-sidebar::-webkit-scrollbar { width: 4px; }
+    .docs-sidebar::-webkit-scrollbar-thumb { background: rgba(37,99,235,0.2); border-radius: 4px; }
+
+    .sidebar-group { margin-bottom: 24px; }
+    .sidebar-group-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--lg-text-3);
+      padding: 0 12px;
+      margin-bottom: 6px;
+    }
+    .sidebar-link {
+      display: block;
+      font-size: 0.83rem;
+      font-weight: 500;
+      color: var(--lg-text-2);
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 150ms ease, color 150ms ease;
+      text-decoration: none;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+    }
+    .sidebar-link:hover { background: rgba(37,99,235,0.06); color: var(--lg-accent); }
+    .sidebar-link.active { background: rgba(37,99,235,0.10); color: var(--lg-accent); font-weight: 600; }
+
+    /* ── Main content ────────────────────────────────────── */
+    .docs-main { flex: 1; min-width: 0; }
+
+    .docs-section { margin-bottom: 16px; scroll-margin-top: 100px; }
+
+    /* ── Cards ───────────────────────────────────────────── */
+    .glass-card {
+      background: rgba(255,255,255,0.55);
+      border: 1px solid rgba(255,255,255,0.80);
+      border-radius: 20px;
+      padding: 32px 36px;
+      margin-bottom: 16px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 2px 16px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.9);
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--lg-text-1);
+      margin: 0 0 20px 0;
+      letter-spacing: -0.2px;
+    }
+    .section-heading .icon {
+      width: 32px; height: 32px;
+      background: transparent;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--lg-accent);
+      flex-shrink: 0;
+    }
+    .section-heading .icon svg { width: 16px; height: 16px; }
+
+    .prose { color: var(--lg-text-2); font-size: 0.9rem; line-height: 1.75; }
+    .prose p { margin-bottom: 12px; }
+    .prose ul { padding-left: 20px; margin-bottom: 12px; }
+    .prose li { margin-bottom: 6px; }
+    .prose strong { color: var(--lg-text-1); font-weight: 600; }
+    .prose a { color: var(--lg-accent); }
+    .prose h2 {
+      font-size: 1.05rem; font-weight: 700; color: var(--lg-text-1);
+      margin: 28px 0 12px; line-height: 1.4;
+    }
+    .prose h2:first-child { margin-top: 0; }
+
+    /* ── Page header ─────────────────────────────────────── */
+    .docs-page-header {
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    .docs-page-header .page-label {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--lg-accent);
+      background: rgba(37,99,235,0.08); padding: 4px 12px;
+      border-radius: 20px; margin-bottom: 12px;
+    }
+    .docs-page-header h1 {
+      font-size: 2rem; font-weight: 800; letter-spacing: -0.5px;
+      color: var(--lg-text-1); margin-bottom: 8px;
+    }
+    .docs-page-header p {
+      font-size: 0.95rem; color: var(--lg-text-2); line-height: 1.7;
+    }
+    .base-url {
+      display: inline-block; margin-top: 12px;
+      font-family: var(--lg-mono); font-size: 0.8rem;
+      background: rgba(37,99,235,0.07); border: 1px solid rgba(37,99,235,0.15);
+      color: var(--lg-accent); padding: 6px 14px; border-radius: 8px;
+    }
+
+    /* ── Badges ──────────────────────────────────────────── */
+    .badge {
+      display: inline-block;
+      font-family: var(--lg-mono);
+      font-size: 0.68rem; font-weight: 700;
+      padding: 3px 9px; border-radius: 6px;
+      margin-right: 6px; vertical-align: middle;
+    }
+    .badge-post  { background: rgba(16,185,129,0.12); color: #059669; }
+    .badge-get   { background: rgba(37,99,235,0.12);  color: #2563eb; }
+    .badge-del   { background: rgba(239,68,68,0.12);  color: #dc2626; }
+    .badge-put   { background: rgba(245,158,11,0.12); color: #d97706; }
+    .badge-req   { background: rgba(239,68,68,0.10);  color: #dc2626; font-size: 0.62rem; }
+    .badge-opt   { background: rgba(100,116,139,0.10);color: #64748b; font-size: 0.62rem; }
+    .badge-paid  { background: rgba(124,58,237,0.10); color: #7c3aed; font-size: 0.62rem; }
+
+    .endpoint-title {
+      font-family: var(--lg-mono);
+      font-size: 0.88rem;
+      color: var(--lg-text-1);
+      vertical-align: middle;
+    }
+
+    /* ── Tables ──────────────────────────────────────────── */
+    .param-table {
+      width: 100%; border-collapse: collapse;
+      margin: 14px 0; font-size: 0.83rem;
+      table-layout: fixed;
+    }
+    .param-table th {
+      text-align: left; padding: 8px 14px;
+      border-bottom: 1.5px solid rgba(0,0,0,0.08);
+      color: var(--lg-text-3); font-weight: 700;
+      font-size: 0.68rem; letter-spacing: 0.07em; text-transform: uppercase;
+      word-break: break-word;
+    }
+    .param-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(0,0,0,0.04);
+      color: var(--lg-text-2); vertical-align: top;
+      word-break: break-word;
+    }
+    .param-table tr:last-child td { border-bottom: none; }
+    .param-table code {
+      font-family: var(--lg-mono); font-size: 0.78rem;
+      background: rgba(37,99,235,0.06); padding: 2px 7px;
+      border-radius: 5px; color: var(--lg-accent);
+      word-break: break-word;
+      display: inline-block;
+    }
+    .param-table td:first-child { font-weight: 600; color: var(--lg-text-1); }
+
+    /* Errors table: narrow HTTP/Code columns so Meaning gets the room it needs */
+    .err-table th:first-child, .err-table td:first-child { width: 16%; }
+    .err-table th:nth-child(2), .err-table td:nth-child(2) { width: 34%; }
+    .err-table th:last-child, .err-table td:last-child { width: 50%; }
+
+    /* ── Code blocks ─────────────────────────────────────── */
+    .code-block {
+      background: #0f172a;
+      border-radius: 14px; padding: 22px 24px;
+      margin: 14px 0; overflow-x: auto;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .code-block pre {
+      font-family: var(--lg-mono); font-size: 0.8rem;
+      color: #e2e8f0; line-height: 1.8; white-space: pre; margin: 0;
+    }
+    .code-block .c  { color: #475569; }  /* comment */
+    .code-block .s  { color: #86efac; }  /* string */
+    .code-block .k  { color: #93c5fd; }  /* key */
+    .code-block .m  { color: #c4b5fd; }  /* method/keyword */
+    .code-block .n  { color: #fbbf24; }  /* number */
+
+    /* ── Callout boxes ───────────────────────────────────── */
+    .callout {
+      display: flex; gap: 12px; align-items: flex-start;
+      padding: 14px 18px; border-radius: 12px;
+      font-size: 0.85rem; line-height: 1.6; margin: 16px 0;
+    }
+    .callout svg { flex-shrink: 0; margin-top: 1px; }
+    .callout-info  { background: rgba(37,99,235,0.07);  border: 1px solid rgba(37,99,235,0.15); color: #1e40af; }
+    .callout-warn  { background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.20); color: #92400e; }
+    .callout-tip   { background: rgba(16,185,129,0.07); border: 1px solid rgba(16,185,129,0.18); color: #065f46; }
+    .callout-info svg { color: #2563eb; }
+    .callout-warn svg { color: #d97706; }
+    .callout-tip  svg { color: #059669; }
+
+    /* ── Scope/limitations text box ─────────────────────── */
+    .scope-box {
+      background: rgba(15,23,42,0.03);
+      border: 1px solid rgba(15,23,42,0.08);
+      border-radius: 12px;
+      padding: 16px 18px;
+      margin: 12px 0 16px;
+    }
+    .scope-box p {
+      font-size: 0.85rem; line-height: 1.65; color: var(--lg-text-2);
+      margin: 0 0 12px;
+    }
+    .scope-box p:last-child { margin-bottom: 0; }
+
+    /* ── Step list ───────────────────────────────────────── */
+    .step-list { list-style: none; padding: 0; counter-reset: steps; }
+    .step-list li {
+      counter-increment: steps;
+      display: flex; gap: 14px; align-items: flex-start;
+      padding: 12px 0; border-bottom: 1px solid rgba(0,0,0,0.05);
+      font-size: 0.88rem; color: var(--lg-text-2);
+    }
+    .step-list li:last-child { border-bottom: none; }
+    .step-list li::before {
+      content: counter(steps);
+      width: 26px; height: 26px; border-radius: 50%;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      color: white; font-size: 0.72rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* ── Agent grid ──────────────────────────────────────── */
+    .agent-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px; margin-top: 16px;
+    }
+    .agent-pill {
+      background: rgba(255,255,255,0.6);
+      border: 1px solid rgba(255,255,255,0.8);
+      border-radius: 12px; padding: 14px 16px;
+      font-size: 0.83rem;
+    }
+    .agent-pill .agent-name {
+      font-family: var(--lg-mono); font-weight: 600;
+      color: var(--lg-accent); font-size: 0.78rem; margin-bottom: 4px;
+    }
+    .agent-pill .agent-role { font-weight: 600; color: var(--lg-text-1); font-size: 0.85rem; margin-bottom: 4px; }
+    .agent-pill .agent-desc { color: var(--lg-text-3); font-size: 0.78rem; line-height: 1.5; }
+
+    /* ── Error table highlight ───────────────────────────── */
+    .err-4xx { color: #d97706; font-weight: 600; }
+    .err-5xx { color: #dc2626; font-weight: 600; }
+    .err-ok  { color: #059669; font-weight: 600; }
+
+    /* ── Divider ─────────────────────────────────────────── */
+    .section-divider {
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--lg-text-3);
+      margin: 28px 0 12px; padding-left: 2px;
+    }
+
+    /* ── Responsive ──────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .docs-sidebar { display: none; }
+      .docs-layout  { padding: 80px 16px 60px; }
+      .glass-card   { padding: 24px 20px; }
+      .scope-box    { padding: 14px 14px; }
+      .prose h2     { font-size: 0.98rem; margin: 24px 0 10px; }
+      .param-table th, .param-table td { padding: 8px 8px; }
+      .err-table th:first-child, .err-table td:first-child { width: 14%; }
+      .err-table th:nth-child(2), .err-table td:nth-child(2) { width: 38%; }
+      .err-table th:last-child, .err-table td:last-child { width: 48%; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="/">
+    <svg viewBox="0 0 32 32" fill="none" width="28" height="28">
+      <defs>
+        <linearGradient id="lg1" x1="0" y1="0" x2="32" y2="32"><stop stop-color="#3b82f6" offset="0%"/><stop stop-color="#7c3aed" offset="100%"/></linearGradient>
+        <linearGradient id="lg2" x1="0" y1="0" x2="32" y2="32"><stop stop-color="#9ca3af" offset="0%"/><stop stop-color="#4b5563" offset="100%"/></linearGradient>
+      </defs>
+      <path d="M16 3L3 27h6l7-13 7 13h6L16 3z" fill="url(#lg1)"/>
+      <path d="M16 16l-3.5 6.5h7L16 16z" fill="url(#lg2)"/>
+    </svg>
+    <span class="brand-name">Aeldorado</span>
+  </a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/#pricing">Pricing</a>
+    <a href="/contact">Contact</a>
+  </div>
+</nav>
+
+<div class="docs-layout">
+
+  <!-- ═══ SIDEBAR ═══ -->
+  <aside class="docs-sidebar" id="docs-sidebar">
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">Getting Started</div>
+      <a class="sidebar-link active" onclick="goToSection('quickstart')">Quick Start</a>
+      <a class="sidebar-link" onclick="goToSection('authentication')">Authentication</a>
+      <a class="sidebar-link" onclick="goToSection('byok')">BYOK — Key Vault</a>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">API Reference</div>
+      <a class="sidebar-link" onclick="goToSection('chat')">POST /v1/chat</a>
+      <a class="sidebar-link" onclick="goToSection('agent')">POST /v1/agent/:name</a>
+      <a class="sidebar-link" onclick="goToSection('usage')">GET /v1/user/usage</a>
+      <a class="sidebar-link" onclick="goToSection('providers')">GET /v1/providers</a>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">Vault Endpoints</div>
+      <a class="sidebar-link" onclick="goToSection('vault-store')">POST /v1/vault/store</a>
+      <a class="sidebar-link" onclick="goToSection('vault-list')">GET /v1/vault/list</a>
+      <a class="sidebar-link" onclick="goToSection('vault-remove')">DELETE /v1/vault/remove</a>
+      <a class="sidebar-link" onclick="goToSection('vault-verify')">POST /v1/vault/verify</a>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">Concepts</div>
+      <a class="sidebar-link" onclick="goToSection('agents')">Agents</a>
+      <a class="sidebar-link" onclick="goToSection('memory')">Project Memory</a>
+      <a class="sidebar-link" onclick="goToSection('scopes')">Key Scopes</a>
+      <a class="sidebar-link" onclick="goToSection('rate-limits')">Rate Limits</a>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">Connect to AI Tools</div>
+      <a class="sidebar-link" onclick="goToSection('mcp')">Connect via MCP</a>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">Reference</div>
+      <a class="sidebar-link" onclick="goToSection('errors')">Error Codes</a>
+      <a class="sidebar-link" onclick="goToSection('support')">Support</a>
+    </div>
+  </aside>
+
+  <!-- ═══ MAIN ═══ -->
+  <main class="docs-main">
+
+    <!-- Page Header -->
+    <div class="docs-page-header">
+      <div class="page-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Documentation
+      </div>
+      <h1>API Reference</h1>
+      <p>Everything you need to integrate Aeldorado's multi-agent AI system into your application.</p>
+      <div class="base-url">https://api.aeldorado.solanacy.in/v1</div>
+    </div>
+
+    <!-- ── Quick Start ──────────────────────────────────── -->
+    <div class="docs-section" id="quickstart">
+      <div class="glass-card">
+        <h2 class="section-heading">
+          <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
+          Quick Start
+        </h2>
+        <div class="prose">
+          <ol class="step-list">
+            <li><strong>Sign up</strong> at <a href="/">aeldorado.solanacy.in</a> and activate your free plan with a one-time ₹1 payment.</li>
+            <li><strong>Store your AI provider key</strong> — go to Key Vault in the dashboard and add your Gemini, OpenAI, or Anthropic key with an encryption password.</li>
+            <li><strong>Generate an API key</strong> — create an <code>aldo-live-xxx</code> key from the API Keys section.</li>
+            <li><strong>Make your first request</strong> — send a message to <code>/v1/chat</code> with both headers below.</li>
+          </ol>
+        </div>
+        <div class="code-block"><pre><span class="c"># Your first Aeldorado request</span>
+<span class="m">curl</span> -X POST https://api.aeldorado.solanacy.in/v1/chat \
+  -H <span class="s">"Authorization: Bearer aldo-live-xxxxxxxxxxxx"</span> \
+  -H <span class="s">"X-Encryption-Password: your-vault-password"</span> \
+  -H <span class="s">"Content-Type: application/json"</span> \
+  -d <span class="s">'{"message": "Summarize our Q3 revenue risks"}'</span></pre></div>
+      </div>
+    </div>
+
+    <!-- ── Authentication ───────────────────────────────── -->
+    <div class="docs-section" id="authentication">
+      <div class="glass-card">
+        <h2 class="section-heading">
+          <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span>
+          Authentication
+        </h2>
+        <div class="prose">
+          <p>All API requests require two headers:</p>
+          <table class="param-table">
+            <thead><tr><th>Header</th><th>Value</th><th></th></tr></thead>
+            <tbody>
+              <tr>
+                <td><code>Authorization</code></td>
+                <td><code>Bearer aldo-live-xxxxxxxxxxxx</code></td>
+                <td><span class="badge badge-req">Required</span></td>
+              </tr>
+              <tr>
+                <td><code>X-Encryption-Password</code></td>
+                <td>The password you set when storing your provider key in the vault</td>
+                <td><span class="badge badge-req">Required</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="callout callout-info">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span>Your encryption password is transmitted over HTTPS and used in-memory to decrypt your stored provider key. It is <strong>never stored or logged</strong> — only held for the duration of the request.</span>
+          </div>
+          <p>Dashboard endpoints (key generation, vault management, billing) use <strong>Firebase Auth</strong> instead of API keys and are only accessible from the dashboard UI.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── BYOK ─────────────────────────────────────────── -->
+    <div class="docs-section" id="byok">
+      <div class="glass-card">
+        <h2 class="section-heading">
+          <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.78 7.78 5.5 5.5 0 017.78-7.78zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg></span>
+          BYOK — Bring Your Own Key
+        </h2>
+        <div class="prose">
+          <p>Aeldorado doesn't hold an AI provider subscription. You bring your own Gemini, OpenAI, or Anthropic key and pay your provider directly. Your key is stored as AES-256-GCM ciphertext — plaintext is never persisted anywhere.</p>
+          <p><strong>Supported providers:</strong></p>
+          <table class="param-table">
+            <thead><tr><th>Provider</th><th>Key Prefix</th><th>Default Model</th></tr></thead>
+            <tbody>
+              <tr><td>Google Gemini</td><td><code>AIza...</code></td><td><code>gemini-3.5-flash</code></td></tr>
+              <tr><td>OpenAI</td><td><code>sk-...</code></td><td><code>gpt-5.4-mini</code></td></tr>
+              <tr><td>Anthropic Claude</td><td><code>sk-ant-...</code></td><td><code>claude-sonnet-4-6</code></td></tr>
+            </tbody>
+          </table>
+          <div class="callout callout-tip">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Provider is auto-detected from your key prefix. You don't need to specify it manually when storing.</span>
+          </div>
+          <p>See the <a onclick="goToSection('vault-store')">Vault endpoints</a> section for full details on storing and managing keys.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── /v1/chat ──────────────────────────────────────── -->
+    <div class="section-divider">API Reference</div>
+
+    <div class="docs-section" id="chat">
+      <div class="glass-card">
+        <h2 class="section-heading">
+          <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></span>
+          <span><span class="badge badge-post">POST</span><span class="endpoint-title">/v1/chat</span></span>
+        </h2>
+        <div class="prose">
+          <p>Auto-routing endpoint. The CEO orchestrator analyzes your message intent and delegates to the right specialist agent automatically. Requires an API key scoped to <code>all</code> or <code>auto</code>.</p>
+
+          <p><strong>Request body:</strong></p>
+          <table class="param-table">
+            <thead><tr><th>Parameter</th><th>Type</th><th>Description</th><th></th></tr></thead>
+            <tbody>
+              <tr><td><code>message</code></td><td>string</td><td>Your prompt or query. Max 32,000 characters.</td><td><span class="badge badge-req">Required</span></td></tr>
+              <tr><td><code>provider</code></td><td>string</td><td><code>gemini</code> · <code>openai</code> · <code>anthropic</code>. Defaults to your vault's stored provider.</td><td><span class="badge badge-opt">Optional</span></td></tr>
+              <tr><td><code>model</code></td><td>string</td><td>Override the model for this request. Must be valid for the chosen provider.</td><td><span class="badge badge-opt">Optional</span></td></tr>
+              <tr><td><code>conversation_id</code></td><td>string</td><td>Resume a previous conversation. Only works with Playground keys.</td><td><span class="badge badge-opt">Optional</span></td></tr>
+            </tbody>
+          </table>
+
+          <div class="code-block"><pre><span class="c"># Auto-routing example</span>
+<span class="m">curl</span> -X POST https://api.aeldorado.solanacy.in/v1/chat \
+  -H <span class="s">"Authorization: Bearer aldo-live-xxxxxxxxxxxx"</span> \
+  -H <span class="s">"X-Encryption-Password: your-vault-password"</span> \
+  -H <span class="s">"Content-Type: application/json"</span> \
+  -d <span class="s">'{
+    "message": "Draft a cold outreach email for our SaaS product",
+    "provider": "gemini"
+  }'</span></pre></div>
+
+          <p><strong>Response:</strong></p>
+          <div class="code-block"><pre>{
+  <span class="k">"id"</span>: <span class="s">"aldo_resp_a1b2c3d4e5"</span>,
+  <span class="k">"object"</span>: <span class="s">"chat.completion"</span>,
+  <span class="k">"agent"</span>: <span class="s">"sales"</span>,
+  <span class="k">"model"</span>: <span class="s">"gemini-3.5-flash"</span>,
+  <span class="k">"provider"</span>: <span class="s">"gemini"</span>,
+  <span class="k">"response"</span>: {
+    <span class="k">"content"</span>: <span class="s">"Subject: Quick question about [Company]..."</span>,
+    <span class="k">"impact"</span>: <span class="s">"LOW"</span>,
+    <span class="k">"agents_consulted"</span>: [<span class="s">"sales"</span>]
+  },
+  <span class="k">"usage"</span>: {
+    <span class="k">"calls_current_window"</span>: <span class="n">12</span>,
+    <span class="k">"calls_remaining_window"</span>: <span class="n">238</span>,
+    <span class="k">"window_resets_in_ms"</span>: <span class="n">12600000</span>,
+    <span class="k">"tokens"</span>: { <span class="k">"input"</span>: <span class="n">142</span>, <span class="k">"output"</span>: <span class="n">387</span>, <span class="k">"total"</span>: <span class="n">529</span> }
+  },
+  <span class="k">"meta"</span>: { <span class="k">"processing_time_ms"</span>: <span class="n">1240</span>, <span class="k">"routing"</span>: <span class="s">"auto"</span> }
+}</pre></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── /v1/agent/:name ───────────────────────────────── -->
+    <div class="docs-section" id="agent">
+      <div class="glass-card">
+        <h2 class="section-heading">
+          <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></span>
+          <span><span class="badge badge-post">POST</span><span class="endpoint-title">/v1/agent/:name</span></span>
+        </h2>
+        <div class="prose">
+          <p>Call a specific agent directly, bypassing the CEO orchestrator. Useful when you know exactly which domain you need. Replace <code>:name</code> with the agent identifier.</p>
+          <p><strong>Available agents:</strong> <code>ceo</code> · <code>cfo</code> · <code>sales</code> · <code>support</code> · <code>research</code> · <code>marketing</code> · <code>legal</code></p>
+
+          <p><strong>Request body:</strong></p>
+          <table class="param-table">
+            <thead><tr><th>Parameter</th><th>Type</th><th>Description</th><th></th></tr></thead>
+            <tbody>
+              <tr><td><code>message</code></td><td>string</td><td>Your prompt or task. Max 32,000 characters.</td><td><span class="badge badge-req">Required</span></td></tr>
+              <tr><td><code>provider</code></td><td>string</td><td>AI provider to use for this request.</td><td><span class="badge badge-opt">Optional</span></td></tr>
+              <tr><td><code>model</code></td><td>string</td><td>Model override for this request.</td><td><span class="badge badge-opt">Optional</span></td></tr>
+              <tr><td><code>conversation_id</code></td><td>string</td><td>Resume a previous conversation (Playground keys only).</td><td><span class="badge badge-opt">Optional</span></td></tr>
+            </tbody>
+          </table>
+
+          <div class="callout callout-warn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <span>API keys scoped to a specific agent (e.g. <code>agent:support</code>) can only call that agent. Calling another agent will return <code>403 insufficient_permission</code>.</span>
+          </div>
+
+          <div class="code-block"><pre><span class="c"># Call the Legal agent directly</span>
+<span class="m">curl</span> -X POST https://api.aeldorado.solanacy.in/v1/agent/legal \
+  -H <span class="s">"Authorization: Bearer aldo-live-xxxxxxxxxxxx"</span> \
+  -H <span class="s">"X-Encryption-Password: your-vault-password"</span> \
+  -H <span class="s">"Content-Type: application/json"</span> \
+  -d <span class="s">'{"message": "Review this NDA clause for red flags: ..."}'</span></pre></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── /v1/user/usage ────────────────────────────────── -->
+    <div class="docs-section" id="usage">
+      <div class="glass-card">
+        <h2 class="section-heading">
+          <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
+          <span><span class="badge badge-get">GET</span><span class="endpoint-title">/v1/user/usage</span></span>
+        </h2>
+        <div class="prose">
+          <p>Returns your current usage stats, remaining quotas, and plan limits across the rolling 5-hour, 7-day, and 28-day windows. Requires Firebase Auth (dashboard only).</p>
+          <div class="code-block"><pre>{
+  <span class="k">"tier"</span>: <span class="s">"growth"</span>,
+  <span class="k">"tierName"</span>: <span class="s">"Growth"</span>,
+  <span class="k">"usage"</span>: { <span class="k">"daily"</span>: <span class="n">47</span>, <span class="k">"weekly"</span>: <span class="n">1840</span>, <span class="k">"monthly"</span>: <span class="n">6204</span> },
+  <span class="k">"limits"</span>: { <span class="k">"daily"</span>: <span class="n">400</span>, <span class="k">"weekly"</span>: <span class="n">5500</span>, <span class="k">"monthly"</span>: <span class="n">14000</span> },
+  <span class="k">"remaining"</span>: { <span class="k">"daily"</span>: <span class="n">353</span>, <span class="k">"weekly"</span>: <span class="n">3660</span>, <span class="k">"monthly"</span>: <span class="n">7796</span> },
+  <span class="k">"resetsInMs"</span>: { <span class="k">"daily"</span>: <span class="n">11400000</span>, <span class="k">"weekly"</span>: <span class="n">427680000</span>, <span class="k">"monthly"</span>: <span class="n">1893600000</span> }
+}</pre></div>
+          <p style="font-size:0.85rem; color:var(--lg-text-2); margin-top:8px;">Note: <code>daily</code> = current 5-hour window, <code>weekly</code> = current 7-day window, <code>monthly</code> = current 28-day window. Field names are kept for backward compatibility; they are rolling windows, not calendar periods.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── /v1/providers ─────────────────────────────────── -->
+    <div class="docs-section" id="providers">
+      <div class="glass-card">
+        <h2 class="section-heading">
+          <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></span>
+          <span><span class="badge badge-get">GET</span><span class="endpoint-title">/v1/providers</span></span>
+        </h2>
+        <div class="prose">
+          <p>Returns all supported AI providers and their available models. No authentication required.</p>
+          <div class="code-block"><pre><span class="m">curl</span> https://api.aeldorado.solanacy.in/v1/providers</pre></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Vault Endpoints ───────────────────────────────── -->
+    <div class="section-divider">Vault Endpoints</div>
+
+    <div class="docs-section" id="vault-store">
+      <div class="glass-card">
+        <h2 class="section-heading">
+          <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/><circle cx="12" cy="16" r="1"/></svg></span>
+          <span><span class="badge badge-post">POST</span><span class="endpoint-title">/v1/vault/store</span></span>
+        </h2>
+        <div class="prose">
+          <p>Encrypt and store your AI provider key. Requires Firebase Auth. Password must be at least 8 characters.</p>
+          <table class="param-table">
+            <thead><tr><th>Parameter</th><th>Type</th><th>Description</th><th></th></tr></thead>
+            <tbody>
+              <tr><td><code>apiKey</code></td><td>string</td><td>Your Gemini, OpenAI, or Anthropic API key.</td><td><span class="badge badge-req">Required</span></td></tr>
+              <tr><td><code>password</code></td><td>string</td><td>Encryption password. Min 8 characters. <strong>Remember this</strong> — it cannot be recovered.</td><td><span class="badge badge-req">Required</span></td></tr>
+              <tr><td><code>provider</code></td><td>string</td><td>Provider name. Auto-detected from key prefix if omitted.</td><td><span class="badge badge-opt">Optional</span></td></tr>
+              <tr><td><code>defaultModel</code></td><td>string</td><td>Default model to use for this provider.</td><td><span class="badge badge-opt">Optional</span></td></tr>
+            </tbody>
+          </table>
+          <div class="callout callout-warn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <span>Your encryption password cannot be reset or recovered. If you forget it, you will need to re-store your key with a new password.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="docs-section" id="vault-list">
+      <div class="glass-card">
+        <h2 class="section-heading">
+          <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></span>
+          <span><span class="badge badge-get">GET</span><span class="endpoint-title">/v1/vault/list</span></span>
+        </h2>
+        <div class="prose">
+          <p>Returns all stored providers with masked keys. Ciphertext, IV, and salt are <strong>never returned</strong>.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="docs-section" id="vault-remove">
+      <div class="glass-card">
+        <h2 class="section-heading">
+          <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></span>
+          <span><span class="badge badge-del">DELETE</span><span class="endpoint-title">/v1/vault/remove</span></span>
+        </h2>
+        <div class="prose">
+          <p>Permanently remove a stored provider key from your vault. Requires <code>provider</code> in the request body.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="docs-section" id="vault-verify">
+      <div class="glass-card">
+        <h2 class="section-heading">
+          <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+          <span><span class="badge badge-post">POST</span><span class="endpoint-title">/v1/vault/verify</span></span>
+        </h2>
+        <div class="prose">
+          <p>Check whether your encryption password can successfully decrypt a stored key. Returns <code>verified: true/false</code> without exposing the key.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Agents ─────────────────────────────────────────── -->
+    <div class="section-divider">Concepts</div>
+
+    <div class="docs-section" id="agents">
+      <div class="glass-card">
+        <h2 class="section-heading">
+          <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></span>
+          Agents
+        </h2>
+        <div class="prose">
+          <p>Aeldorado has seven purpose-built agents, each specialized for a business domain. Use <code>/v1/chat</code> for auto-routing or call them directly via <code>/v1/agent/:name</code>.</p>
+          <div class="agent-grid">
+            <div class="agent-pill">
+              <div class="agent-name">ceo</div>
+              <div class="agent-role">Orchestrator</div>
+              <div class="agent-desc">Routes queries, multi-domain tasks, general strategy</div>
+            </div>
+            <div class="agent-pill">
+              <div class="agent-name">cfo</div>
+              <div class="agent-role">Finance Expert</div>
+              <div class="agent-desc">Budgets, forecasts, cash flow, financial analysis</div>
+            </div>
+            <div class="agent-pill">
+              <div class="agent-name">sales</div>
+              <div class="agent-role">Revenue Driver</div>
+              <div class="agent-desc">Lead qualification, outreach, deal strategy</div>
+            </div>
+            <div class="agent-pill">
+              <div class="agent-name">support</div>
+              <div class="agent-role">Customer Care</div>
+              <div class="agent-desc">Support tickets, FAQ, issue resolution</div>
+            </div>
+            <div class="agent-pill">
+              <div class="agent-name">research</div>
+              <div class="agent-role">Data Analyst</div>
+              <div class="agent-desc">Market research, competitive intel, data analysis</div>
+            </div>
+            <div class="agent-pill">
+              <div class="agent-name">marketing</div>
+              <div class="agent-role">Growth Strategist</div>
+              <div class="agent-desc">Campaigns, content strategy, brand positioning</div>
+            </div>
+            <div class="agent-pill">
+              <div class="agent-name">legal</div>
+              <div class="agent-role">Compliance Officer</div>
+              <div class="agent-desc">Contract review, compliance checks, legal analysis</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Memory ─────────────────────────────────────────── -->
+    <div class="docs-section" id="memory">
+      <div class="glass-card">
+        <h2 class="section-heading">
+          <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></span>
+          Project Memory
+          <span class="badge badge-paid">Starter+</span>
+        </h2>
+        <div class="prose">
+          <p>Agents can remember context across sessions when you link an API key to a project. Memory is <strong>per-project</strong>, not per-key.</p>
+          <table class="param-table">
+            <thead><tr><th>Behaviour</th><th>Detail</th></tr></thead>
+            <tbody>
+              <tr><td>Auto-extraction</td><td>Facts are automatically extracted after every 20 messages in a conversation.</td></tr>
+              <tr><td>Manual facts</td><td>Say "remember that..." in your message — the agent will detect and save it.</td></tr>
+              <tr><td>Visibility</td><td><code>internal</code> facts are only seen by your own keys. <code>public</code> facts are also visible to customer-facing keys.</td></tr>
+              <tr><td>Free tier</td><td>Memory is hard-blocked. Upgrade to Starter or above to enable.</td></tr>
+            </tbody>
+          </table>
+          <div class="callout callout-info">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span>Public-facing keys (e.g. for a customer support widget) only ever receive <code>public</code> visibility facts. Internal company knowledge is never leaked to customer-facing keys.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Key Scopes ─────────────────────────────────────── -->
+    <div class="docs-section" id="scopes">
+      <div class="glass-card">
+        <h2 class="section-heading">
+          <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg></span>
+          Key Scopes
+        </h2>
+        <div class="prose">
+          <p>Each API key has a scope that limits which agents it can access. Assign the narrowest scope needed.</p>
+          <table class="param-table">
+            <thead><tr><th>Scope</th><th>Access</th></tr></thead>
+            <tbody>
+              <tr><td><code>all</code></td><td>Full access — both <code>/v1/chat</code> and all <code>/v1/agent/:name</code> endpoints.</td></tr>
+              <tr><td><code>auto</code></td><td><code>/v1/chat</code> only (auto-routing through CEO).</td></tr>
+              <tr><td><code>agent:ceo</code></td><td>Direct CEO agent only.</td></tr>
+              <tr><td><code>agent:cfo</code></td><td>Direct CFO agent only.</td></tr>
+              <tr><td><code>agent:sales</code></td><td>Direct Sales agent only.</td></tr>
+              <tr><td><code>agent:support</code></td><td>Direct Support agent only.</td></tr>
+              <tr><td><code>agent:research</code></td><td>Direct Research agent only.</td></tr>
+              <tr><td><code>agent:marketing</code></td><td>Direct Marketing agent only.</td></tr>
+              <tr><td><code>agent:legal</code></td><td>Direct Legal agent only.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Rate Limits ────────────────────────────────────── -->
+    <div class="docs-section" id="rate-limits">
+      <div class="glass-card">
+        <h2 class="section-heading">
+          <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
+          Rate Limits
+        </h2>
+        <div class="prose">
+          <p>Limits use <strong>rolling windows</strong>, not fixed calendar resets. Each window (5-hour, 7-day, 28-day) starts from your <em>first request</em> in that window and expires exactly that duration later. When it expires, your next request starts a brand new window from that moment. When any limit is exceeded, the API returns <code>429</code>.</p>
+          <p>Per-key hard limit: <strong>30 requests/minute</strong> regardless of plan.</p>
+          <table class="param-table">
+            <thead><tr><th>Plan</th><th>Price</th><th>5-hour window</th><th>7-day window</th><th>28-day window</th></tr></thead>
+            <tbody>
+              <tr><td>Free</td><td>₹1 one-time</td><td>80</td><td>1,000</td><td>2,500</td></tr>
+              <tr><td>Starter</td><td>₹349 / 28 days</td><td>250</td><td>3,000</td><td>7,500</td></tr>
+              <tr><td>Growth</td><td>₹599 / 28 days</td><td>400</td><td>5,500</td><td>14,000</td></tr>
+              <tr><td>Pro</td><td>₹999 / 28 days</td><td>550</td><td>7,500</td><td>18,500</td></tr>
+              <tr><td>Enterprise T1</td><td>₹3,999 / 28 days</td><td>1,500</td><td>20,000</td><td>45,000</td></tr>
+              <tr><td>Enterprise T2</td><td>₹6,999 / 28 days</td><td>3,000</td><td>50,000</td><td>125,000</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Error Codes ────────────────────────────────────── -->
+    <div class="section-divider">Reference</div>
+
+    <div class="docs-section" id="errors">
+      <div class="glass-card">
+        <h2 class="section-heading">
+          <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>
+          Error Codes
+        </h2>
+        <div class="prose">
+          <p>All errors follow this shape:</p>
+          <div class="code-block"><pre>{
+  <span class="k">"error"</span>: {
+    <span class="k">"code"</span>: <span class="s">"invalid_api_key"</span>,
+    <span class="k">"message"</span>: <span class="s">"The API key provided is invalid or has been revoked."</span>,
+    <span class="k">"detail"</span>: <span class="s">"..."</span>  <span class="c">// present when available</span>
+  }
+}</pre></div>
+          <table class="param-table err-table">
+            <thead><tr><th>HTTP</th><th>Code</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td class="err-ok">400</td><td><code>invalid_request</code></td><td>Malformed body or missing required fields.</td></tr>
+              <tr><td class="err-ok">400</td><td><code>message_too_long</code></td><td>Message exceeds 32,000 characters.</td></tr>
+              <tr><td class="err-ok">400</td><td><code>invalid_provider</code></td><td>Provider not supported or undetectable from key.</td></tr>
+              <tr><td class="err-ok">400</td><td><code>invalid_model</code></td><td>Model not available for the chosen provider.</td></tr>
+              <tr><td class="err-4xx">401</td><td><code>invalid_api_key</code></td><td>API key is invalid or revoked.</td></tr>
+              <tr><td class="err-4xx">401</td><td><code>missing_api_key</code></td><td>Authorization header missing.</td></tr>
+              <tr><td class="err-4xx">401</td><td><code>decryption_failed</code></td><td>Wrong encryption password or corrupted vault entry.</td></tr>
+              <tr><td class="err-4xx">402</td><td><code>insufficient_credits</code></td><td>No remaining API calls. Upgrade your plan.</td></tr>
+              <tr><td class="err-4xx">403</td><td><code>insufficient_permission</code></td><td>Key scope doesn't allow this agent or endpoint.</td></tr>
+              <tr><td class="err-4xx">403</td><td><code>account_suspended</code></td><td>Account suspended due to policy violations.</td></tr>
+              <tr><td class="err-4xx">403</td><td><code>conversation_limit_reached</code></td><td>Free tier: max 5 active conversations. Delete one or upgrade.</td></tr>
+              <tr><td class="err-4xx">404</td><td><code>agent_not_found</code></td><td>Agent name in URL is invalid.</td></tr>
+              <tr><td class="err-4xx">404</td><td><code>vault_key_not_found</code></td><td>No key stored for the requested provider.</td></tr>
+              <tr><td class="err-4xx">429</td><td><code>daily_limit_exceeded</code></td><td>5-hour window quota hit. Resets 5 hours after your first request in that window.</td></tr>
+              <tr><td class="err-4xx">429</td><td><code>weekly_limit_exceeded</code></td><td>7-day window quota hit. Resets 7 days after your first request in that window.</td></tr>
+              <tr><td class="err-4xx">429</td><td><code>monthly_limit_exceeded</code></td><td>28-day window quota hit. Resets 28 days after your first request in that window.</td></tr>
+              <tr><td class="err-4xx">429</td><td><code>rate_limit_exceeded</code></td><td>30 req/min per key exceeded.</td></tr>
+              <tr><td class="err-5xx">500</td><td><code>agent_error</code></td><td>Agent encountered an internal error.</td></tr>
+              <tr><td class="err-5xx">500</td><td><code>internal_error</code></td><td>Unexpected server error.</td></tr>
+              <tr><td class="err-5xx">503</td><td><code>service_unavailable</code></td><td>Service temporarily down. Retry with backoff.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── MCP ──────────────────────────────────────────────── -->
+    <div class="section-divider">Connect to AI Tools</div>
+
+    <div class="docs-section" id="mcp">
+      <div class="glass-card">
+        <h2 class="section-heading">
+          <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0H5a2 2 0 01-2-2v-4m6 6h10a2 2 0 002-2v-4m-6 6V3"/></svg></span>
+          Connect via MCP
+        </h2>
+        <div class="prose">
+          <p>Aeldorado speaks <strong>MCP (Model Context Protocol)</strong>, so you can plug it straight into Claude Desktop, Claude.ai, Claude Code, Cursor, or any other MCP-compatible client. Once connected, that AI assistant can manage your API keys, run your agents, check usage, and read/write project memory — all by you just chatting with it normally, no manual API calls needed.</p>
+
+          <div class="callout callout-tip">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>You don't need to copy-paste an <code>aldo-live-...</code> key for this. MCP uses a one-click "Sign in with Google" approval screen instead.</span>
+          </div>
+
+          <h2>Step 1 — Add the connector</h2>
+          <p>In your MCP client (e.g. Claude.ai → Settings → Connectors, or Claude Desktop → Settings → Connectors), add a new custom connector pointing at:</p>
+          <div class="code-block"><pre>https://api.aeldorado.solanacy.in/mcp</pre></div>
+
+          <h2>Step 2 — Approve access</h2>
+          <p>Your client opens an Aeldorado sign-in page. Sign in with the same Google account you use for your Aeldorado dashboard, then click <strong>Allow Access</strong>. You'll be redirected straight back to your client — no key copying.</p>
+
+          <h2>Step 3 — Enable MCP Agent Access (for chat &amp; agent tools)</h2>
+          <p>To let the connected assistant actually run your agents (not just manage keys/projects), it needs read access to your provider keys. Go to <strong>Dashboard → Settings → MCP Agent Access</strong> and click <strong>Enable</strong>, then <strong>Sync</strong>. This stores a copy of your vault keys re-encrypted specifically for MCP use — your original vault and its password are untouched.</p>
+
+          <h2>Step 4 — Start using it</h2>
+          <p>That's it. Try asking your assistant things like:</p>
+          <div class="code-block"><pre><span class="c">// Just talk to it naturally — no code needed</span>
+<span class="s">"List my Aeldorado API keys"</span>
+<span class="s">"Generate a new key scoped to the sales agent"</span>
+<span class="s">"Ask the legal agent to review this NDA clause"</span>
+<span class="s">"How much usage have I got left this month?"</span></pre></div>
+
+          <h2>Available MCP Tools</h2>
+          <p>Once connected, these tools are available to your assistant:</p>
+          <table class="param-table">
+            <thead><tr><th>Tool</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td><code>chat</code></td><td>Send a message to the CEO orchestrator, which routes it to the right specialist agent(s) automatically.</td></tr>
+              <tr><td><code>call_agent</code></td><td>Call a specific agent directly — CEO, CFO, Sales, Support, Research, Marketing, or Legal.</td></tr>
+              <tr><td><code>list_keys</code></td><td>List your API keys (masked), with scope, project, tier, and creation date.</td></tr>
+              <tr><td><code>generate_key</code></td><td>Generate a new API key. Shown once — save it immediately.</td></tr>
+              <tr><td><code>revoke_key</code></td><td>Permanently revoke a key by its prefix.</td></tr>
+              <tr><td><code>list_vault</code></td><td>List provider keys stored in your encrypted vault (masked, no sensitive data exposed).</td></tr>
+              <tr><td><code>store_vault_key</code></td><td>Store a new provider key in your vault (AES-256-GCM encrypted).</td></tr>
+              <tr><td><code>remove_vault_key</code></td><td>Remove a provider key from your vault.</td></tr>
+              <tr><td><code>create_project</code></td><td>Create a project to group keys under a shared memory pool.</td></tr>
+              <tr><td><code>list_projects</code></td><td>List your projects with memory status and linked key count.</td></tr>
+              <tr><td><code>delete_project</code></td><td>Delete a project and its associated memory.</td></tr>
+              <tr><td><code>check_usage</code></td><td>Check current usage stats and remaining limits (5-hour/7-day/28-day rolling windows).</td></tr>
+              <tr><td><code>view_memory</code></td><td>View stored memory facts for a project.</td></tr>
+              <tr><td><code>remember_fact</code></td><td>Save a fact to project memory for future context.</td></tr>
+              <tr><td><code>add_memory</code></td><td>Same as <code>remember_fact</code>, with explicit scope/visibility control.</td></tr>
+              <tr><td><code>delete_memory</code></td><td>Delete a specific memory fact.</td></tr>
+              <tr><td><code>billing_status</code></td><td>Check your subscription tier, expiry, and available plans.</td></tr>
+              <tr><td><code>view_logs</code></td><td>View recent request logs — agent used, model, status, latency.</td></tr>
+            </tbody>
+          </table>
+
+          <h2>Scope &amp; Limitations</h2>
+          <div class="scope-box">
+            <p>MCP access is scoped to what's stored inside Aeldorado — your project memory and account data — not your company's live infrastructure. Agent responses are grounded in saved memory (facts you've added via <code>remember_fact</code> / <code>add_memory</code>) and account metadata, not real-time databases, CRMs, or internal systems, even if you self-host Aeldorado elsewhere with deeper access wired up.</p>
+            <p>This is intentional. Giving any connected MCP client unrestricted access to live company infrastructure would be a large, uncontrolled attack surface — and real-time data integrations carry compute costs outside what free and standard tiers cover. Memory-scoped access lets you control exactly what's exposed.</p>
+            <p>If you need an assistant to reason over live company data through MCP, save the relevant facts to project memory ahead of time. For deeper, real-time integrations, run Aeldorado agents inside your own environment with direct access to your data sources.</p>
+          </div>
+
+          <div class="callout callout-info">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            <span>Self-hosted Aeldorado deployments can be wired directly into your own databases and internal tools — that access level isn't available through the public MCP endpoint.</span>
+          </div>
+
+          <div class="callout callout-tip">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>MCP access is tied to your Google sign-in and can be revoked anytime from your connected client's settings — Aeldorado never sees or stores your client's OAuth secret in plaintext.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Support ─────────────────────────────────────────── -->
+    <div class="docs-section" id="support">
+      <div class="glass-card">
+        <h2 class="section-heading">
+          <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></span>
+          Support
+        </h2>
+        <div class="prose">
+          <p>Questions, bugs, or integration help — reach out:</p>
+          <ul>
+            <li><strong>Email:</strong> <a href="mailto:aeldorado@solanacy.in">aeldorado@solanacy.in</a></li>
+            <li><strong>Dashboard:</strong> <a href="/">aeldorado.solanacy.in</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-links">
+      <a href="/">Home</a>
+      <a href="/docs">API Docs</a>
+      <a href="/news">Newsroom</a>
+      <a href="/privacy">Privacy Policy</a>
+      <a href="/terms">Terms of Service</a>
+      <a href="/refund">Refund Policy</a>
+      <a href="/contact">Contact</a>
+    </div>
+    <p class="footer-copy">© 2026 Aeldorado by <a href="https://solanacy.in" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">Solanacy Technologies</a>. All rights reserved.</p>
+    <p class="footer-legal">Owned &amp; operated by <strong>Saumik Paul</strong> · <a href="https://solanacy.in" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">Solanacy Technologies</a></p>
+  </div>
+</footer>
+
+<script>
+  // ── Sidebar scroll-to with active highlight ──────────────
+  function goToSection(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // ── Intersection Observer for active sidebar link ─────────
+  const sections = document.querySelectorAll('.docs-section');
+  const links    = document.querySelectorAll('.sidebar-link');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.sidebar-link[onclick="goToSection('${entry.target.id}')"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px', threshold: 0 });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>

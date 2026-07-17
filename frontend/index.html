@@ -1,0 +1,2348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aeldorado — The Legendary Intelligence | AI API Platform</title>
+  <link rel="icon" type="image/png" href="/assets/aeldorado.png" />
+  <link rel="apple-touch-icon" href="/assets/aeldorado.png" />
+  <meta name="description" content="Aeldorado is a multi-agent AI API platform with seven specialized AI agents, BYOK architecture, MCP server support, and prepaid billing. By Solanacy Technologies." />
+  <link rel="canonical" href="https://aeldorado.solanacy.in/" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Aeldorado" />
+  <meta property="og:title" content="Aeldorado — The Legendary Intelligence | AI API Platform" />
+  <meta property="og:description" content="Aeldorado is a multi-agent AI API platform with seven specialized AI agents, BYOK architecture, MCP server support, and prepaid billing. By Solanacy Technologies." />
+  <meta property="og:url" content="https://aeldorado.solanacy.in/" />
+  <meta property="og:image" content="https://aeldorado.solanacy.in/assets/og-banner.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="en_US" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Aeldorado — The Legendary Intelligence | AI API Platform" />
+  <meta name="twitter:description" content="Aeldorado is a multi-agent AI API platform with seven specialized AI agents, BYOK architecture, MCP server support, and prepaid billing. By Solanacy Technologies." />
+  <meta name="twitter:image" content="https://aeldorado.solanacy.in/assets/og-banner.png" />
+
+  <meta name="robots" content="index, follow" />
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Aeldorado",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Web",
+    "description": "Aeldorado is a multi-agent AI API platform by Solanacy Technologies, offering seven specialized AI agents (CEO, CFO, Sales, Support, Research, Marketing, Legal) accessible via a single API. Features E2E encrypted BYOK (bring-your-own-key) architecture, auto-routing, MCP (Model Context Protocol) server support for integration with tools like Claude, and prepaid billing.",
+    "url": "https://aeldorado.solanacy.in/",
+    "image": "https://aeldorado.solanacy.in/assets/og-banner.png",
+    "keywords": "multi-agent AI API, BYOK, Model Context Protocol, MCP server, AI agent platform, CEO agent, CFO agent, Sales agent, Research agent",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Solanacy Technologies",
+      "url": "https://solanacy.in",
+      "logo": "https://aeldorado.solanacy.in/assets/aeldorado.png"
+    },
+    "offers": {
+      "@type": "Offer",
+      "priceCurrency": "INR"
+    }
+  }
+  </script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="/css/dashboard.css" />
+  <link rel="stylesheet" href="/css/liquid-glass.css" />
+  <link rel="stylesheet" href="/css/billing.css" />
+
+  <!-- Scripts -->
+  <script type="module" src="/js/app.js"></script>
+  <script defer src="/js/landing.js"></script>
+  <!-- Cashfree Payment SDK -->
+  <script defer src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      background: #ffffff;
+      color: #0d1117;
+      line-height: 1.6;
+      overflow-x: hidden;
+      letter-spacing: -0.2px;
+    }
+    html { scroll-behavior: smooth; }
+
+    /* ── Animations (compositor-only) ──────────────────────── */
+    @keyframes lgSlideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes heroFadeIn {
+      from { opacity: 0; transform: translateY(32px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* ── Navbar (frosted glass on scroll) ─────────────────── */
+    #navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      padding: 20px 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: padding 300ms cubic-bezier(0.22,1,0.36,1),
+                  background 300ms ease,
+                  box-shadow 300ms ease;
+      background: transparent;
+    }
+    #navbar.scrolled {
+      background: #ffffff;
+      border-bottom: 1px solid rgba(37, 99, 235, 0.08);
+      box-shadow: 0 1px 8px rgba(80,110,200,0.06), 0 4px 24px rgba(80,110,200,0.04);
+      padding: 14px 60px;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 1.2rem;
+      letter-spacing: -0.4px;
+      cursor: pointer;
+      color: #0d1117;
+    }
+    .nav-brand svg { width: 32px; height: 32px; }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+    }
+    .nav-link {
+      color: #44505f;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 200ms ease;
+      cursor: pointer;
+    }
+    .nav-link:hover { color: #0d1117; }
+
+    /* Buttons */
+    .btn {
+      padding: 10px 28px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.88rem;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      transform: translateZ(0);
+      transition: transform 160ms cubic-bezier(0.22,1,0.36,1),
+                  box-shadow 160ms cubic-bezier(0.22,1,0.36,1);
+    }
+    .btn-primary {
+      background: #2563eb;
+      color: white;
+      box-shadow: 0 2px 14px rgba(37,99,235,0.30);
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px) translateZ(0);
+      box-shadow: 0 4px 22px rgba(37,99,235,0.40);
+    }
+    .btn-primary:active {
+      transform: translateY(0) scale(0.98) translateZ(0);
+      transition-duration: 80ms;
+    }
+    .btn-ghost {
+      background: transparent;
+      color: #44505f;
+      border: 1.5px solid rgba(200,210,230,0.70);
+    }
+    .btn-ghost:hover {
+      color: #0d1117;
+      border-color: rgba(37,99,235,0.30);
+      background: rgba(37,99,235,0.04);
+    }
+
+    @media (max-width: 768px) {
+      #navbar { padding: 14px 20px; }
+      #navbar.scrolled { padding: 10px 20px; }
+      .nav-links { display: none; }
+    }
+
+    /* ── Hero ─────────────────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 140px 60px 100px;
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse 90% 55% at 15% 8%, rgba(100,140,255,0.14) 0%, transparent 55%),
+        radial-gradient(ellipse 65% 50% at 85% 88%, rgba(170,120,255,0.08) 0%, transparent 55%),
+        #fbfcff;
+    }
+    .hero-background { display: none; } /* Remove heavy blobs */
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      max-width: 1300px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+      width: 100%;
+    }
+    .hero-text h1 {
+      font-size: clamp(2.8rem, 6vw, 4.5rem);
+      font-weight: 800;
+      line-height: 1.08;
+      margin-bottom: 24px;
+      letter-spacing: -1.5px;
+      color: #0d1117;
+      animation: heroFadeIn 0.6s cubic-bezier(0.22,1,0.36,1) 0.1s both;
+    }
+    .hero-text h1 .gradient {
+      background: linear-gradient(135deg, #2563eb 0%, #7c3aed 60%, #c026d3 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-text p {
+      font-size: 1.1rem;
+      color: #44505f;
+      line-height: 1.75;
+      margin-bottom: 40px;
+      max-width: 500px;
+      animation: heroFadeIn 0.6s cubic-bezier(0.22,1,0.36,1) 0.2s both;
+    }
+    .cta-buttons {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 48px;
+      animation: heroFadeIn 0.6s cubic-bezier(0.22,1,0.36,1) 0.3s both;
+      flex-wrap: wrap;
+    }
+
+    /* Code block (terminal) */
+    .code-block {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      border-radius: 20px;
+      padding: 32px;
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.20);
+      animation: heroFadeIn 0.6s cubic-bezier(0.22,1,0.36,1) 0.25s both;
+      overflow: hidden;
+      position: relative;
+    }
+    .code-block::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+    }
+    .code-header { display: flex; gap: 8px; margin-bottom: 20px; }
+    .code-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .code-dot.red { background: #ef4444; }
+    .code-dot.yellow { background: #f59e0b; }
+    .code-dot.green { background: #10b981; }
+    .code-content {
+      font-family: 'DM Mono', 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      color: #e2e8f0;
+      line-height: 1.8;
+      overflow-x: auto;
+    }
+
+    /* ── Stats ────────────────────────────────────────────── */
+    .stats {
+      padding: 80px 60px;
+      background: rgba(248,250,252,0.6);
+      border-top: 1px solid rgba(0,0,0,0.04);
+      border-bottom: 1px solid rgba(0,0,0,0.04);
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 48px;
+      max-width: 1100px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .stat-item h3 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+      font-family: 'DM Mono', monospace;
+    }
+    .stat-item p {
+      color: #8a96a3;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* ── Features ─────────────────────────────────────────── */
+    .features {
+      padding: 120px 60px;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+    .section-header {
+      text-align: center;
+      margin-bottom: 72px;
+    }
+    .section-header h2 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 800;
+      margin-bottom: 16px;
+      letter-spacing: -0.8px;
+      color: #0d1117;
+    }
+    .section-header p {
+      font-size: 1.05rem;
+      color: #44505f;
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+      gap: 24px;
+    }
+    /* Glass feature card */
+    .feature-card {
+      position: relative;
+      isolation: isolate;
+      padding: 36px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.48);
+      border: 1px solid rgba(255,255,255,0.76);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.88);
+      transform: translateZ(0);
+      transition: transform 200ms cubic-bezier(0.22,1,0.36,1), opacity 180ms ease;
+    }
+    .feature-card::before {
+      content: "";
+      position: absolute; inset: 0;
+      border-radius: inherit;
+      backdrop-filter: blur(6px) saturate(160%);
+      -webkit-backdrop-filter: blur(6px) saturate(160%);
+      z-index: -1;
+      pointer-events: none;
+      border-top: 1px solid rgba(255,255,255,0.85);
+    }
+    .feature-card:hover {
+      transform: translateY(-3px) translateZ(0);
+      opacity: 0.93;
+    }
+    .feature-card h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      letter-spacing: -0.2px;
+      color: #0d1117;
+    }
+    .feature-card h3 svg { vertical-align: middle; margin-right: 8px; margin-top: -2px; color: #2563eb; }
+    .feature-card p {
+      color: #44505f;
+      line-height: 1.7;
+      font-size: 0.88rem;
+    }
+
+    /* ── Agents ───────────────────────────────────────────── */
+    .agents {
+      padding: 120px 60px;
+      background:
+        radial-gradient(ellipse 70% 40% at 50% 90%, rgba(100,140,255,0.06) 0%, transparent 60%),
+        #fafbfe;
+    }
+    .agents-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    /* Glass agent card */
+    .agent-card {
+      flex: 1 1 220px;
+      max-width: 260px;
+      position: relative;
+      isolation: isolate;
+      padding: 28px 22px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.48);
+      border: 1px solid rgba(255,255,255,0.76);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.88);
+      text-align: center;
+      overflow: hidden;
+      transform: translateZ(0);
+      transition: transform 200ms cubic-bezier(0.22,1,0.36,1), opacity 180ms ease;
+    }
+    .agent-card::before {
+      content: "";
+      position: absolute; inset: 0;
+      border-radius: inherit;
+      backdrop-filter: blur(6px) saturate(160%);
+      -webkit-backdrop-filter: blur(6px) saturate(160%);
+      z-index: -1;
+      pointer-events: none;
+      border-top: 1px solid rgba(255,255,255,0.85);
+    }
+    .agent-card:hover {
+      transform: translateY(-3px) translateZ(0);
+      opacity: 0.93;
+    }
+    .agent-icon {
+      width: 56px; height: 56px;
+      margin: 0 auto 16px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      box-shadow: 0 4px 16px var(--agent-shadow, rgba(59,130,246,0.35));
+    }
+    .agent-icon svg { width: 26px; height: 26px; flex-shrink: 0; }
+    .agent-card h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.2px;
+      color: #0d1117;
+    }
+    .agent-role {
+      display: inline-block;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 20px;
+      background: var(--agent-tint, rgba(59,130,246,0.08));
+      color: var(--agent-color, #2563eb);
+      margin-bottom: 10px;
+    }
+    .agent-desc {
+      color: #44505f;
+      font-size: 0.82rem;
+      line-height: 1.6;
+    }
+
+    /* ── Tools ────────────────────────────────────────────── */
+    .tools {
+      padding: 96px 24px;
+      position: relative;
+    }
+    .tools-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto 48px;
+    }
+    .tool-card {
+      flex: 1 1 200px;
+      max-width: 240px;
+      position: relative;
+      isolation: isolate;
+      padding: 26px 20px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.48);
+      border: 1px solid rgba(255,255,255,0.76);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.88);
+      overflow: hidden;
+      transform: translateZ(0);
+      transition: transform 200ms cubic-bezier(0.22,1,0.36,1), opacity 180ms ease;
+    }
+    .tool-card::before {
+      content: "";
+      position: absolute; inset: 0;
+      border-radius: inherit;
+      backdrop-filter: blur(6px) saturate(160%);
+      -webkit-backdrop-filter: blur(6px) saturate(160%);
+      z-index: -1;
+      pointer-events: none;
+      border-top: 1px solid rgba(255,255,255,0.85);
+    }
+    .tool-card:hover {
+      transform: translateY(-3px) translateZ(0);
+      opacity: 0.93;
+    }
+    .tool-card.coming-soon {
+      opacity: 0.7;
+    }
+    .tool-card.coming-soon:hover {
+      transform: none;
+      opacity: 0.7;
+    }
+    .tool-icon {
+      width: 48px; height: 48px;
+      margin-bottom: 14px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      box-shadow: 0 4px 14px var(--tool-shadow, rgba(59,130,246,0.35));
+    }
+    .tool-icon svg { width: 22px; height: 22px; flex-shrink: 0; }
+    .tool-card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .tool-badge {
+      display: inline-block;
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+    .tool-badge.phase-1 {
+      background: rgba(16,185,129,0.1);
+      color: #059669;
+    }
+    .tool-badge.soon {
+      background: rgba(100,116,139,0.1);
+      color: #64748b;
+    }
+    .tool-badge.flagship {
+      background: rgba(99,102,241,0.12);
+      color: #4f46e5;
+    }
+    .tool-card h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      letter-spacing: -0.2px;
+      color: #0d1117;
+    }
+    .tool-card p {
+      color: #44505f;
+      font-size: 0.78rem;
+      line-height: 1.6;
+      margin: 0;
+    }
+    .tools-suggest {
+      text-align: center;
+      margin-top: 12px;
+    }
+    .tools-suggest p {
+      font-size: 0.88rem;
+      color: #44505f;
+    }
+    .tools-suggest a {
+      color: #2563eb;
+      font-weight: 600;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(37,99,235,0.3);
+      transition: border-color 150ms ease;
+    }
+    .tools-suggest a:hover {
+      border-color: #2563eb;
+    }
+    .tools-paid-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      color: #8a96a3;
+      margin-top: 10px;
+    }
+    .tools-paid-note svg {
+      width: 13px; height: 13px;
+      opacity: 0.6;
+    }
+
+    /* ── Pricing ──────────────────────────────────────────── */
+    .pricing {
+      padding: 120px 60px;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+    .pricing-card {
+      position: relative;
+      isolation: isolate;
+      padding: 28px 22px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.48);
+      border: 1px solid rgba(255,255,255,0.76);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.88);
+      transform: translateZ(0);
+      transition: transform 200ms cubic-bezier(0.22,1,0.36,1), opacity 180ms ease;
+    }
+    .pricing-card::before {
+      content: "";
+      position: absolute; inset: 0;
+      border-radius: inherit;
+      backdrop-filter: blur(6px) saturate(160%);
+      -webkit-backdrop-filter: blur(6px) saturate(160%);
+      z-index: -1;
+      pointer-events: none;
+      border-top: 1px solid rgba(255,255,255,0.85);
+    }
+    .pricing-card:hover {
+      transform: translateY(-3px) translateZ(0);
+      opacity: 0.93;
+    }
+    .pricing-card.featured {
+      border-color: rgba(37,99,235,0.35);
+      background: rgba(237, 242, 255, 0.58);
+      box-shadow: 0 4px 24px rgba(37,99,235,0.12), inset 0 1px 0 rgba(255,255,255,0.88);
+    }
+    .pricing-popular-badge {
+      position: absolute;
+      top: 16px; right: 16px;
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff;
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 3px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      box-shadow: 0 2px 8px rgba(16,185,129,0.25);
+    }
+    .pricing-card h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      letter-spacing: -0.2px;
+      color: #0d1117;
+    }
+    .pricing-card .price {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin: 20px 0;
+      color: #0d1117;
+      font-family: 'DM Mono', monospace;
+      letter-spacing: -0.5px;
+    }
+    .pricing-card .price span {
+      font-size: 0.85rem;
+      color: #8a96a3;
+      font-weight: 500;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .pricing-card ul { list-style: none; margin: 24px 0; }
+    .pricing-card li {
+      padding: 8px 0;
+      color: #44505f;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 500;
+    }
+    .pricing-card li:before {
+      content: "✓";
+      color: #10b981;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+    .pricing-card .btn { width: 100%; display: block; text-align: center; }
+    .pricing-note {
+      text-align: center;
+      color: #8a96a3;
+      font-size: 0.82rem;
+      margin-top: 20px;
+      line-height: 1.6;
+    }
+
+    /* ── CTA Section ──────────────────────────────────────── */
+    .cta {
+      padding: 100px 60px;
+      background: linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #c026d3 100%);
+      color: white;
+      text-align: center;
+    }
+    .cta h2 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 800;
+      margin-bottom: 16px;
+      letter-spacing: -0.8px;
+    }
+    .cta p {
+      font-size: 1.05rem;
+      margin-bottom: 40px;
+      opacity: 0.92;
+      line-height: 1.7;
+      max-width: 550px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .cta .cta-buttons { justify-content: center; }
+
+    /* ── Footer ───────────────────────────────────────────── */
+    .footer {
+      padding: 80px 60px 48px;
+      background: #0f172a;
+      color: #94a3b8;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto 64px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 56px;
+      align-items: start;
+    }
+    @media (max-width: 700px) {
+      .footer-content {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    .footer-section h4 {
+      color: white;
+      font-weight: 700;
+      margin-bottom: 20px;
+      letter-spacing: -0.2px;
+      font-size: 0.9rem;
+    }
+    .footer-section a {
+      display: block;
+      color: #94a3b8;
+      text-decoration: none;
+      margin-bottom: 12px;
+      transition: color 200ms ease;
+      font-weight: 500;
+      font-size: 0.88rem;
+      cursor: pointer;
+    }
+    .footer-section a:hover { color: white; }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding-top: 32px;
+      text-align: center;
+      color: #64748b;
+      font-size: 0.82rem;
+    }
+
+    /* Dashboard (unused in landing but keep) */
+    .dashboard { min-height:100vh; padding:160px 60px 100px; background:#f8fafc; }
+
+    /* ── Responsive ───────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      .pricing-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .hero-content { grid-template-columns: 1fr; gap: 40px; }
+      .code-block { display: none; }
+      .hero { padding: 120px 24px 60px; }
+      .stats, .features, .agents, .tools, .pricing, .cta, .footer {
+        padding-left: 24px;
+        padding-right: 24px;
+      }
+      .stats-grid { gap: 32px; }
+      .pricing-grid { grid-template-columns: 1fr; }
+      .pricing-card.featured { transform: none; }
+    }
+  </style>
+  </head>
+
+<body>
+
+  <!-- ═══ LOADING SCREEN ═══ -->
+  <div id="loader" class="loader">
+    <div class="loader-inner">
+      <div class="loader-ring"></div>
+      <div class="loader-brand">
+        <span class="loader-icon">
+          <svg viewBox="0 0 32 32" fill="none" width="32" height="32"><path d="M16 4L5 11h22L16 4z" fill="url(#ld-g)"/><rect x="5" y="11" width="22" height="2" rx=".5" fill="url(#ld-g)"/><rect x="7" y="14" width="2.5" height="10" rx=".75" fill="url(#ld-g)"/><rect x="12.25" y="14" width="2.5" height="10" rx=".75" fill="url(#ld-g)"/><rect x="17.25" y="14" width="2.5" height="10" rx=".75" fill="url(#ld-g)"/><rect x="22.5" y="14" width="2.5" height="10" rx=".75" fill="url(#ld-g)"/><rect x="4" y="25" width="24" height="2.5" rx=".75" fill="url(#ld-g)"/><defs><linearGradient id="ld-g" x1="4" y1="4" x2="28" y2="28"><stop stop-color="#F59E0B"/><stop offset="1" stop-color="#D97706"/></linearGradient></defs></svg>
+        </span>
+        <span class="loader-name">Aeldorado</span>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Unconditional fallback: kill the boot loader no matter what app.js does.
+    // Runs inline, independent of module load/auth — guarantees no infinite loader.
+    (function () {
+      function killLoader() {
+        var l = document.getElementById("loader");
+        if (l) l.remove();
+      }
+      window.hideLoader = window.hideLoader || killLoader;
+      setTimeout(killLoader, 1500);
+    })();
+  </script>
+
+  <!-- ═══ TOAST CONTAINER ═══ -->
+  <div id="toasts" class="toast-container"></div>
+
+  <!-- ═══ LANDING PAGE ═══ -->
+  <div id="page-landing" class="page" data-page="landing">
+    <main>
+<nav id="navbar">
+    <div class="nav-brand" onclick="showPage('landing')" role="button" tabindex="0">
+      <svg viewBox="0 0 32 32" fill="none" width="28" height="28">
+      <defs>
+        <linearGradient id="lg-outer-28" x1="0" y1="0" x2="32" y2="32">
+          <stop stop-color="#3b82f6" offset="0%"/>
+          <stop stop-color="#7c3aed" offset="100%"/>
+        </linearGradient>
+        <linearGradient id="lg-inner-28" x1="0" y1="0" x2="32" y2="32">
+          <stop stop-color="#9ca3af" offset="0%"/>
+          <stop stop-color="#4b5563" offset="100%"/>
+        </linearGradient>
+      </defs>
+      <path d="M16 3L3 27h6l7-13 7 13h6L16 3z" fill="url(#lg-outer-28)"/>
+      <path d="M16 16l-3.5 6.5h7L16 16z" fill="url(#lg-inner-28)" opacity="1"/>
+    </svg>
+      <span>Aeldorado</span>
+    </div>
+    <div class="nav-links">
+      <a href="#features" class="nav-link">Features</a>
+      <a href="#agents" class="nav-link">Agents</a>
+      <a href="#tools" class="nav-link">Tools</a>
+      <a href="#pricing" class="nav-link">Pricing</a>
+      <a href="/docs" class="nav-link">Docs</a>
+      <a href="/news" class="nav-link">News</a>
+      <button type="button" id="btn-nav-signin" class="btn btn-ghost">Sign In</button>
+      <button type="button" id="btn-nav-start" class="btn btn-primary">Get Started</button>
+    </div>
+  </nav>
+
+<section class="hero">
+      <div class="hero-background">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+      </div>
+
+      <div class="hero-content">
+        <div class="hero-text">
+          <h1>The Legendary <span class="gradient">Intelligence.</span></h1>
+          <p>Stop building AI infrastructure from scratch. Seven production-ready agents, one API call away — with your keys, your provider, zero backend setup.</p>
+          
+          <div class="cta-buttons">
+            <a href="/login" class="btn btn-primary" id="btn-hero-start">Start Building Free</a>
+            <a href="/docs" class="btn btn-ghost">Read Docs</a>
+          </div>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <div class="code-dot red"></div>
+            <div class="code-dot yellow"></div>
+            <div class="code-dot green"></div>
+          </div>
+          <div class="code-content">
+curl -X POST \<br/>
+&nbsp;&nbsp;https://api.aeldorado.solanacy.in/v1/chat \<br/>
+&nbsp;&nbsp;-H "Authorization: Bearer KEY" \<br/>
+&nbsp;&nbsp;-H "X-Encryption-Password: PASSWORD" \<br/>
+&nbsp;&nbsp;-d '{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;"message": "Analyze market trends for Q3"<br/>
+&nbsp;&nbsp;}'
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <h3>7</h3>
+          <p>SPECIALIZED AGENTS</p>
+        </div>
+        <div class="stat-item">
+          <h3>256-bit</h3>
+          <p>KEY ENCRYPTION STRENGTH</p>
+        </div>
+        <div class="stat-item">
+          <h3>3</h3>
+          <p>AI PROVIDERS SUPPORTED</p>
+        </div>
+        <div class="stat-item">
+          <h3>Live</h3>
+          <p>STATUS MONITORING</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+      <div class="section-header">
+        <h2>Skip the boilerplate. Ship faster.</h2>
+        <p>No agent architecture to design, no provider bugs to chase, no infrastructure to maintain.</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24" style="vertical-align: middle; margin-right: 8px; margin-top: -3px;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>E2E Encrypted Keys</h3>
+          <p>Your AI provider keys are AES-256-GCM encrypted before storage. Plaintext is never persisted — only held in-memory during your API call.</p>
+        </div>
+        <div class="feature-card">
+          <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24" style="vertical-align: middle; margin-right: 8px; margin-top: -3px;"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>7 Specialized Agents</h3>
+          <p>CEO, CFO, Sales, Support, Research, Marketing, Legal — each domain-tuned for expert-level responses.</p>
+        </div>
+        <div class="feature-card">
+          <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24" style="vertical-align: middle; margin-right: 8px; margin-top: -3px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Intelligent Auto-Routing</h3>
+          <p>One endpoint. No manual agent switching, no routing logic to write — just send your message and get the right expert.</p>
+        </div>
+        <div class="feature-card">
+          <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24" style="vertical-align: middle; margin-right: 8px; margin-top: -3px;"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.78 7.78 5.5 5.5 0 017.78-7.78zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>Bring Your Own Key</h3>
+          <p>No forced model lock-in. Use your own Gemini, OpenAI, or Anthropic keys and pay your provider directly.</p>
+        </div>
+        <div class="feature-card">
+          <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24" style="vertical-align: middle; margin-right: 8px; margin-top: -3px;"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Usage Analytics</h3>
+          <p>Real-time dashboards with 5-hour, 7-day, and 28-day usage tracking and token consumption insights.</p>
+        </div>
+        <div class="feature-card">
+          <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24" style="vertical-align: middle; margin-right: 8px; margin-top: -3px;"><path d="M12 2a4 4 0 014 4c0 1.5-.8 2.8-2 3.5V12h-4V9.5A4 4 0 0112 2z"/><rect x="8" y="12" width="8" height="8" rx="1.5"/><line x1="10" y1="16" x2="14" y2="16"/></svg>Project Memory</h3>
+          <p>Agents remember context across sessions. Link keys to projects and facts auto-extract after 20 messages — no manual prompt stuffing.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Agents Section -->
+    <section class="agents" id="agents">
+      <div class="section-header">
+        <h2>Meet Your AI Team</h2>
+        <p>Seven specialized agents, each purpose-built for their domain.</p>
+      </div>
+
+      <div class="agents-grid">
+        <div class="agent-card" style="--agent-color:#3b82f6; --agent-tint:rgba(59,130,246,0.1); --agent-shadow:rgba(59,130,246,0.45);">
+          <div class="agent-icon" style="background: linear-gradient(135deg, #3b82f6, #2563eb);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="5" r="2"/>
+              <circle cx="5" cy="19" r="2"/>
+              <circle cx="19" cy="19" r="2"/>
+              <circle cx="12" cy="12" r="2.4"/>
+              <line x1="12" y1="9.6" x2="12" y2="7.2"/>
+              <line x1="10.3" y1="13.3" x2="6.5" y2="17.3"/>
+              <line x1="13.7" y1="13.3" x2="17.5" y2="17.3"/>
+            </svg>
+          </div>
+          <h3>CEO</h3>
+          <span class="agent-role">Orchestrator</span>
+          <p class="agent-desc">Understands every request and routes it to the right specialist instantly.</p>
+        </div>
+        <div class="agent-card" style="--agent-color:#10b981; --agent-tint:rgba(16,185,129,0.1); --agent-shadow:rgba(16,185,129,0.45);">
+          <div class="agent-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <ellipse cx="12" cy="6" rx="7" ry="3"/>
+              <path d="M5 6v5c0 1.66 3.13 3 7 3s7-1.34 7-3V6"/>
+              <path d="M5 11v5c0 1.66 3.13 3 7 3s7-1.34 7-3v-5"/>
+            </svg>
+          </div>
+          <h3>CFO</h3>
+          <span class="agent-role">Finance Expert</span>
+          <p class="agent-desc">Tracks spend, forecasts cash flow, and flags financial risks early.</p>
+        </div>
+        <div class="agent-card" style="--agent-color:#f59e0b; --agent-tint:rgba(245,158,11,0.1); --agent-shadow:rgba(245,158,11,0.45);">
+          <div class="agent-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="8"/>
+              <circle cx="12" cy="12" r="4.3"/>
+              <circle cx="12" cy="12" r="1"/>
+            </svg>
+          </div>
+          <h3>Sales</h3>
+          <span class="agent-role">Revenue Driver</span>
+          <p class="agent-desc">Qualifies leads, drafts outreach, and helps you close deals faster.</p>
+        </div>
+        <div class="agent-card" style="--agent-color:#ec4899; --agent-tint:rgba(236,72,153,0.1); --agent-shadow:rgba(236,72,153,0.45);">
+          <div class="agent-icon" style="background: linear-gradient(135deg, #ec4899, #db2777);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 13v-1a8 8 0 0 1 16 0v1"/>
+              <rect x="2.6" y="13" width="4" height="6" rx="1.4"/>
+              <rect x="17.4" y="13" width="4" height="6" rx="1.4"/>
+              <path d="M20 19v0.8a3 3 0 0 1-3 3h-2.6"/>
+            </svg>
+          </div>
+          <h3>Support</h3>
+          <span class="agent-role">Customer Care</span>
+          <p class="agent-desc">Resolves customer queries around the clock with zero wait time.</p>
+        </div>
+        <div class="agent-card" style="--agent-color:#8b5cf6; --agent-tint:rgba(139,92,246,0.1); --agent-shadow:rgba(139,92,246,0.45);">
+          <div class="agent-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="10.5" cy="10.5" r="6.5"/>
+              <line x1="7.5" y1="9" x2="13.5" y2="9"/>
+              <line x1="7.5" y1="12" x2="11.5" y2="12"/>
+              <line x1="15.3" y1="15.3" x2="20.2" y2="20.2"/>
+            </svg>
+          </div>
+          <h3>Research</h3>
+          <span class="agent-role">Data Analyst</span>
+          <p class="agent-desc">Digs through data and reports to surface the insights that matter.</p>
+        </div>
+        <div class="agent-card" style="--agent-color:#ef4444; --agent-tint:rgba(239,68,68,0.1); --agent-shadow:rgba(239,68,68,0.45);">
+          <div class="agent-icon" style="background: linear-gradient(135deg, #ef4444, #dc2626);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9v6h3l9 5V4L6 9H3z"/>
+              <path d="M17 9.5a3.5 3.5 0 0 1 0 5"/>
+              <path d="M20 7.3a6.5 6.5 0 0 1 0 9.4"/>
+            </svg>
+          </div>
+          <h3>Marketing</h3>
+          <span class="agent-role">Growth Strategist</span>
+          <p class="agent-desc">Plans campaigns and content that turn visibility into real growth.</p>
+        </div>
+        <div class="agent-card" style="--agent-color:#6366f1; --agent-tint:rgba(99,102,241,0.1); --agent-shadow:rgba(99,102,241,0.45);">
+          <div class="agent-icon" style="background: linear-gradient(135deg, #6366f1, #4f46e5);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="3" x2="12" y2="21"/>
+              <line x1="5" y1="7" x2="19" y2="7"/>
+              <path d="M5 7l-3 6a3 3 0 0 0 6 0l-3-6z"/>
+              <path d="M19 7l-3 6a3 3 0 0 0 6 0l-3-6z"/>
+              <line x1="8" y1="21" x2="16" y2="21"/>
+            </svg>
+          </div>
+          <h3>Legal</h3>
+          <span class="agent-role">Compliance Officer</span>
+          <p class="agent-desc">Reviews contracts and flags compliance risks before they become problems.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tools Section -->
+    <section class="tools" id="tools">
+      <div class="section-header">
+        <h2>Built-in Business Tools</h2>
+        <p>Pre-built AI pipelines for real business tasks. No prompt engineering — just fill in the details.</p>
+      </div>
+
+      <div class="tools-grid">
+
+        <!-- Phase 1 — Available Soon -->
+        <div class="tool-card" style="--tool-shadow:rgba(245,158,11,0.35);">
+          <div class="tool-card-top">
+            <div class="tool-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.7 11.6 19.79 19.79 0 0 1 1.58 3a2 2 0 0 1 2-2.18h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+            </div>
+            <span class="tool-badge phase-1">Phase 1</span>
+          </div>
+          <h3>Cold Outreach Generator</h3>
+          <p>Prospect details in, personalized email + LinkedIn message out. Sales agent powered.</p>
+        </div>
+
+        <div class="tool-card" style="--tool-shadow:rgba(139,92,246,0.35);">
+          <div class="tool-card-top">
+            <div class="tool-icon" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="10.5" cy="10.5" r="6.5"/>
+                <line x1="7.5" y1="9" x2="13.5" y2="9"/>
+                <line x1="7.5" y1="12" x2="11.5" y2="12"/>
+                <line x1="15.3" y1="15.3" x2="20.2" y2="20.2"/>
+              </svg>
+            </div>
+            <span class="tool-badge phase-1">Phase 1</span>
+          </div>
+          <h3>Competitor Intelligence</h3>
+          <p>Enter a competitor's name, get a full strengths, weaknesses, and pricing breakdown.</p>
+        </div>
+
+        <div class="tool-card" style="--tool-shadow:rgba(99,102,241,0.35);">
+          <div class="tool-card-top">
+            <div class="tool-icon" style="background:linear-gradient(135deg,#6366f1,#4f46e5);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="9" y1="13" x2="15" y2="13"/>
+                <line x1="9" y1="17" x2="13" y2="17"/>
+              </svg>
+            </div>
+            <span class="tool-badge phase-1">Phase 1</span>
+          </div>
+          <h3>Contract Risk Analyzer</h3>
+          <p>Paste any contract. Legal agent flags red flags, ambiguous clauses, and risk level.</p>
+        </div>
+
+        <div class="tool-card" style="--tool-shadow:rgba(16,185,129,0.35);">
+          <div class="tool-card-top">
+            <div class="tool-icon" style="background:linear-gradient(135deg,#10b981,#059669);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="20" x2="18" y2="10"/>
+                <line x1="12" y1="20" x2="12" y2="4"/>
+                <line x1="6" y1="20" x2="6" y2="14"/>
+              </svg>
+            </div>
+            <span class="tool-badge phase-1">Phase 1</span>
+          </div>
+          <h3>Financial Health Checker</h3>
+          <p>Revenue, expenses, burn rate in — full financial analysis and recommendations out.</p>
+        </div>
+
+        <!-- Flagship -->
+        <div class="tool-card" style="--tool-shadow:rgba(37,99,235,0.4); border-color: rgba(99,102,241,0.3);">
+          <div class="tool-card-top">
+            <div class="tool-icon" style="background:linear-gradient(135deg,#2563eb,#4f46e5);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
+            </div>
+            <span class="tool-badge flagship">Flagship</span>
+          </div>
+          <h3>Business Plan Generator</h3>
+          <p>All 4 agents — CEO, CFO, Research, Marketing — orchestrated together to build your complete plan.</p>
+        </div>
+
+        <!-- Phase 2 — Coming Soon -->
+        <div class="tool-card coming-soon" style="--tool-shadow:rgba(239,68,68,0.25);">
+          <div class="tool-card-top">
+            <div class="tool-icon" style="background:linear-gradient(135deg,#ef4444,#dc2626);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                <line x1="16" y1="2" x2="16" y2="6"/>
+                <line x1="8" y1="2" x2="8" y2="6"/>
+                <line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
+            </div>
+            <span class="tool-badge soon">Coming Soon</span>
+          </div>
+          <h3>Content Calendar Generator</h3>
+          <p>Brand goals in, a full 30-day content plan with copy ideas out.</p>
+        </div>
+
+        <div class="tool-card coming-soon" style="--tool-shadow:rgba(236,72,153,0.25);">
+          <div class="tool-card-top">
+            <div class="tool-icon" style="background:linear-gradient(135deg,#ec4899,#db2777);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+            </div>
+            <span class="tool-badge soon">Coming Soon</span>
+          </div>
+          <h3>Ad Copy Generator</h3>
+          <p>Product and audience in, multiple high-converting ad variations out.</p>
+        </div>
+
+        <div class="tool-card coming-soon" style="--tool-shadow:rgba(245,158,11,0.25);">
+          <div class="tool-card-top">
+            <div class="tool-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 20h9"/>
+                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+              </svg>
+            </div>
+            <span class="tool-badge soon">Coming Soon</span>
+          </div>
+          <h3>NDA Generator</h3>
+          <p>Party details and terms in, a ready-to-sign NDA draft out.</p>
+        </div>
+
+        <div class="tool-card coming-soon" style="--tool-shadow:rgba(16,185,129,0.25);">
+          <div class="tool-card-top">
+            <div class="tool-icon" style="background:linear-gradient(135deg,#10b981,#059669);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+            </div>
+            <span class="tool-badge soon">Coming Soon</span>
+          </div>
+          <h3>FAQ Generator</h3>
+          <p>Product info in, top 20 FAQs with answers ready for your support docs.</p>
+        </div>
+
+        <div class="tool-card coming-soon" style="--tool-shadow:rgba(99,102,241,0.25);">
+          <div class="tool-card-top">
+            <div class="tool-icon" style="background:linear-gradient(135deg,#6366f1,#4f46e5);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+            </div>
+            <span class="tool-badge soon">Coming Soon</span>
+          </div>
+          <h3>Job Description Writer</h3>
+          <p>Role requirements in, a compelling, bias-checked JD ready to post.</p>
+        </div>
+
+        <div class="tool-card coming-soon" style="--tool-shadow:rgba(139,92,246,0.25);">
+          <div class="tool-card-top">
+            <div class="tool-icon" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+              </svg>
+            </div>
+            <span class="tool-badge soon">Coming Soon</span>
+          </div>
+          <h3>Market Size Estimator</h3>
+          <p>Industry and geography in, TAM / SAM / SOM breakdown with sources out.</p>
+        </div>
+
+        <div class="tool-card coming-soon" style="--tool-shadow:rgba(59,130,246,0.25);">
+          <div class="tool-card-top">
+            <div class="tool-icon" style="background:linear-gradient(135deg,#3b82f6,#2563eb);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="9" y1="13" x2="15" y2="13"/>
+                <line x1="9" y1="17" x2="11" y2="17"/>
+              </svg>
+            </div>
+            <span class="tool-badge soon">Coming Soon</span>
+          </div>
+          <h3>PRD Generator</h3>
+          <p>Feature idea in, a complete Product Requirements Document ready for your dev team.</p>
+        </div>
+
+      </div>
+
+      <div class="tools-suggest">
+        <p>
+          Available on Starter plan and above.
+          <span class="tools-paid-note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            Paid plans only
+          </span>
+        </p>
+        <p style="margin-top:10px;">
+          Have a tool in mind?
+          <a href="mailto:aeldorado@solanacy.in?subject=Tool%20Suggestion%3A%20%5BYour%20Tool%20Name%5D&body=Hi%20Aeldorado%20team%2C%0A%0AI%27d%20love%20to%20see%20a%20tool%20that%20does%3A%0A%0A">Suggest it →</a>
+        </p>
+      </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+      <div class="section-header">
+        <h2>Simple, Transparent Pricing</h2>
+        <p>28-day billing cycles. No hidden fees. Start free with a one-time ₹1 activation.</p>
+      </div>
+
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <h3>Free</h3>
+          <p style="color: #8a96a3; font-size: 0.82rem;">Get started instantly</p>
+          <div class="price">₹0<span> /forever</span></div>
+          <p style="color: #059669; font-size: 0.78rem; font-weight: 600; margin-top: -12px;">₹1 one-time activation</p>
+          <ul>
+            <li>80 requests / 5 hours</li>
+            <li>1,000 requests / 7 days</li>
+            <li>2,500 requests / 28 days</li>
+            <li>All 7 AI agents</li>
+          </ul>
+          <button type="button" class="btn btn-ghost" onclick="navigateTo('/login')">Get Started</button>
+        </div>
+
+        <div class="pricing-card">
+          <h3>Starter</h3>
+          <p style="color: #8a96a3; font-size: 0.82rem;">For side projects</p>
+          <div class="price">₹349<span> /28 days</span></div>
+          <ul>
+            <li>250 requests / 5 hours</li>
+            <li>3,000 requests / 7 days</li>
+            <li>7,500 requests / 28 days</li>
+            <li>Email support</li>
+          </ul>
+          <button type="button" class="btn btn-ghost" onclick="navigateTo('/login')">Choose Starter</button>
+        </div>
+
+        <div class="pricing-card featured">
+          <span class="pricing-popular-badge">Popular</span>
+          <h3>Growth</h3>
+          <p style="color: #8a96a3; font-size: 0.82rem;">For growing products</p>
+          <div class="price">₹599<span> /28 days</span></div>
+          <ul>
+            <li>400 requests / 5 hours</li>
+            <li>5,500 requests / 7 days</li>
+            <li>14,000 requests / 28 days</li>
+            <li>Priority support</li>
+            <li>Usage analytics</li>
+          </ul>
+          <button type="button" class="btn btn-primary" onclick="navigateTo('/login')">Choose Growth</button>
+        </div>
+
+        <div class="pricing-card">
+          <h3>Pro</h3>
+          <p style="color: #8a96a3; font-size: 0.82rem;">For production workloads</p>
+          <div class="price">₹999<span> /28 days</span></div>
+          <ul>
+            <li>550 requests / 5 hours</li>
+            <li>7,500 requests / 7 days</li>
+            <li>18,500 requests / 28 days</li>
+            <li>Advanced analytics</li>
+          </ul>
+          <button type="button" class="btn btn-ghost" onclick="navigateTo('/login')">Choose Pro</button>
+        </div>
+      </div>
+      <p class="pricing-note">
+        Need more capacity? Enterprise T1 (₹3,999) and Enterprise T2 (₹6,999) plans offer up to 125,000 requests/28 days — <a href="/login" onclick="navigateTo('/login'); return false;" style="color:#2563eb;">sign in</a> for details.
+      </p>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+      <h2>Start Building with Aeldorado</h2>
+      <p>Get started in under a minute. Bring your own API keys, activate for ₹1, and start making requests.</p>
+      <div class="cta-buttons">
+        <button type="button" class="btn btn-primary" style="background: white; color: #3b82f6;" onclick="navigateTo('/login')">Start Building Now →</button>
+        <a href="/docs" class="btn btn-ghost" style="border-color: rgba(255, 255, 255, 0.3); color: white;">Read the Docs</a>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h4>Product</h4>
+          <a href="#features">Features</a>
+          <a href="#tools">Tools</a>
+          <a href="#pricing">Pricing</a>
+          <a href="/docs">Documentation</a>
+        </div>
+        <div class="footer-section">
+          <h4>Company</h4>
+          <a href="/news">News</a>
+          <a href="https://solanacy.in" target="_blank" rel="noopener">Solanacy Technologies</a>
+        </div>
+        <div class="footer-section">
+          <h4>Legal</h4>
+          <a href="/privacy">Privacy Policy</a>
+          <a href="/terms">Terms of Service</a>
+          <a href="/refund">Refund Policy</a>
+        </div>
+        <div class="footer-section">
+          <h4>Contact</h4>
+          <a href="/contact">Contact Us</a>
+          <a href="mailto:aeldorado@solanacy.in">aeldorado@solanacy.in</a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© 2026 Aeldorado by <a href="https://solanacy.in" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">Solanacy Technologies</a>. All rights reserved.</p>
+        <p style="margin-top: 6px; font-size: 0.78rem; opacity: 0.5;">Owned &amp; operated by <strong>Saumik Paul</strong> · <a href="https://solanacy.in" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">Solanacy Technologies</a></p>
+      </div>
+    </footer>
+    </main>
+  </div>
+
+  <!-- ═══ AUTH PAGE ═══ -->
+  <div id="page-auth" class="page" data-page="auth" style="display:none">
+    <main>
+    <div class="auth-bg-glow"></div>
+    <div class="auth-container">
+      <div class="auth-card">
+        <div class="auth-header">
+          <svg viewBox="0 0 32 32" fill="none" width="48" height="48" style="margin: 0 auto; display: block; margin-bottom: var(--space-4);">
+          <defs>
+            <linearGradient id="lg-outer-48" x1="0" y1="0" x2="32" y2="32">
+              <stop stop-color="#3b82f6" offset="0%"/>
+              <stop stop-color="#7c3aed" offset="100%"/>
+            </linearGradient>
+            <linearGradient id="lg-inner-48" x1="0" y1="0" x2="32" y2="32">
+              <stop stop-color="#9ca3af" offset="0%"/>
+              <stop stop-color="#4b5563" offset="100%"/>
+            </linearGradient>
+          </defs>
+          <path d="M16 3L3 27h6l7-13 7 13h6L16 3z" fill="url(#lg-outer-48)"/>
+          <path d="M16 16l-3.5 6.5h7L16 16z" fill="url(#lg-inner-48)" opacity="1"/>
+        </svg>
+          <h2>Welcome to Aeldorado</h2>
+          <p>Sign in to access your dashboard</p>
+        </div>
+        <div class="auth-tabs">
+          <div class="auth-tab-bg"></div>
+          <button type="button" class="auth-tab active" id="tab-login">Sign In</button>
+          <button type="button" class="auth-tab" id="tab-register">Register</button>
+        </div>
+        <div class="auth-form-window">
+          <button type="button" id="btn-google-signin" class="btn btn-google">
+            <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615Z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18Z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.997 8.997 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332Z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 6.29C4.672 4.163 6.656 2.58 9 2.58Z"/></svg>
+            Sign in with Google
+          </button>
+          <p style="text-align:center; font-size:0.72rem; color:#8a96a3; margin: 12px 0 4px; line-height:1.5;">
+            By continuing, you agree to our
+            <a href="/privacy" style="color:#2563eb;">Privacy Policy</a>,
+            <a href="/terms" style="color:#2563eb;">Terms of Service</a>, and
+            <a href="/refund" style="color:#2563eb;">Refund Policy</a>.
+          </p>
+          <div class="auth-divider"><span>or</span></div>
+          <form id="form-email-auth" class="auth-form">
+            <input type="text" id="auth-name" placeholder="Full Name" autocomplete="name" style="display:none; opacity:0; transform:translateX(20px); transition:all 0.3s;" aria-label="Full Name" />
+            <input type="email" id="auth-email" placeholder="Email address" required autocomplete="email" aria-label="Email" />
+            <input type="password" id="auth-password" placeholder="Password" required autocomplete="current-password" aria-label="Password" />
+            <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+          </form>
+        </div>
+        <a href="/" class="auth-back">← Back to home</a>
+      </div>
+    </div>
+    </main>
+  </div>
+
+  <!-- ═══ DASHBOARD LAYOUT ═══ -->
+  <div id="page-dashboard" class="page dashboard-layout" data-page="dashboard" style="display:none">
+    <!-- Mobile Header -->
+    <div class="mobile-header">
+      <div class="sidebar-brand">
+        <span class="brand-logo-svg">
+          <svg viewBox="0 0 32 32" fill="none" width="26" height="26">
+          <defs>
+            <linearGradient id="lg-sb-outer" x1="0" y1="0" x2="32" y2="32">
+              <stop stop-color="#3b82f6" offset="0%"/>
+              <stop stop-color="#7c3aed" offset="100%"/>
+            </linearGradient>
+          </defs>
+          <path d="M16 3L3 27h6l7-13 7 13h6L16 3z" fill="url(#lg-sb-outer)"/>
+          <path d="M16 16l-3.5 6.5h7L16 16z" fill="#ffffff" opacity="0.92"/>
+        </svg>
+        </span>
+        <span class="brand-name">Aeldorado</span>
+      </div>
+      <button id="btn-mobile-menu" class="mobile-menu-btn" aria-label="Menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
+    <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <span class="brand-logo-svg">
+          <svg viewBox="0 0 32 32" fill="none" width="26" height="26">
+          <defs>
+            <linearGradient id="lg-sb-outer" x1="0" y1="0" x2="32" y2="32">
+              <stop stop-color="#3b82f6" offset="0%"/>
+              <stop stop-color="#7c3aed" offset="100%"/>
+            </linearGradient>
+          </defs>
+          <path d="M16 3L3 27h6l7-13 7 13h6L16 3z" fill="url(#lg-sb-outer)"/>
+          <path d="M16 16l-3.5 6.5h7L16 16z" fill="#ffffff" opacity="0.92"/>
+        </svg>
+        </span>
+        <span class="brand-name">Aeldorado</span>
+      </div>
+      <!-- Collapse toggle — always visible, positioned at sidebar edge -->
+      <button id="btn-sidebar-collapse" class="sidebar-collapse-btn" aria-label="Collapse sidebar" title="Collapse sidebar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+          <rect x="3" y="4" width="18" height="16" rx="2"/>
+          <line x1="9" y1="4" x2="9" y2="20"/>
+          <polyline points="14 9 11.5 12 14 15"/>
+        </svg>
+      </button>
+      <nav class="sidebar-nav">
+        <a href="#dashboard" class="sidebar-link active" data-nav="dashboard" data-label="Dashboard">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+          Dashboard
+        </a>
+        <a href="#keys" class="sidebar-link" data-nav="keys" data-label="API Keys">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.78 7.78 5.5 5.5 0 017.78-7.78zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+          API Keys
+        </a>
+        <a href="#vault" class="sidebar-link" data-nav="vault" data-label="Key Vault">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/><circle cx="12" cy="16" r="1"/></svg>
+          Key Vault
+        </a>
+        <a href="#playground" class="sidebar-link" data-nav="playground" data-label="Playground">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          Playground
+        </a>
+        <a href="#logs" class="sidebar-link" data-nav="logs" data-label="Request Logs">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg>
+          Request Logs
+        </a>
+        <a href="#docs" class="sidebar-link" data-nav="docs" data-label="Docs">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Docs
+        </a>
+        <a href="#projects" class="sidebar-link" data-nav="projects" data-label="Projects">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+          Projects
+        </a>
+        <a href="#finetune" class="sidebar-link" data-nav="finetune" data-label="Fine Tune">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 014 4c0 1.5-.8 2.5-1.5 3.5S13 11.5 13 13v1"/><path d="M9.5 9.5A4 4 0 0112 2"/><line x1="12" y1="17" x2="12" y2="17.01"/><path d="M9 21h6"/><path d="M10 18h4"/></svg>
+          Fine Tune
+        </a>
+        <a href="#settings" class="sidebar-link" data-nav="settings" data-label="Settings">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+          Settings
+        </a>
+        <a href="#billing" class="sidebar-link" data-nav="billing" data-label="Billing">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          Billing
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-info" id="sidebar-user">
+          <div class="user-avatar" id="user-avatar">U</div>
+          <div class="user-details">
+            <span class="user-name" id="user-name">User</span>
+            <span class="user-tier" id="user-tier">Free</span>
+          </div>
+        </div>
+        <button id="btn-signout" class="btn btn-ghost btn-sm btn-block sidebar-signout-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Sign Out
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Admin broadcast banner — populated by loadBroadcasts() in app.js -->
+      <div id="broadcast-stack"></div>
+
+      <!-- Dashboard View -->
+      <div id="view-dashboard" class="view active">
+        <div class="view-header">
+          <h2>Dashboard</h2>
+          <div class="header-meta">
+            <span class="tier-badge" id="dash-tier">Developer</span>
+          </div>
+        </div>
+
+        <!-- Gradient defs for rings (hidden) -->
+        <svg style="position:absolute;width:0;height:0" aria-hidden="true">
+          <defs>
+            <linearGradient id="ring-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#3b82f6"/>
+              <stop offset="100%" stop-color="#8b5cf6"/>
+            </linearGradient>
+          </defs>
+        </svg>
+
+        <!-- Usage Meters -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">5-Hour Usage</div>
+            <div class="stat-ring" id="ring-daily">
+              <svg viewBox="0 0 120 120"><circle class="ring-bg" cx="60" cy="60" r="52"/><circle class="ring-fill" cx="60" cy="60" r="52" id="ring-daily-fill"/></svg>
+              <div class="ring-value" id="val-daily">0</div>
+            </div>
+            <div class="stat-limit" id="limit-daily">/ unlimited</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">7-Day Usage</div>
+            <div class="stat-ring" id="ring-weekly">
+              <svg viewBox="0 0 120 120"><circle class="ring-bg" cx="60" cy="60" r="52"/><circle class="ring-fill" cx="60" cy="60" r="52" id="ring-weekly-fill"/></svg>
+              <div class="ring-value" id="val-weekly">0</div>
+            </div>
+            <div class="stat-limit" id="limit-weekly">/ unlimited</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">28-Day Usage</div>
+            <div class="stat-ring" id="ring-monthly">
+              <svg viewBox="0 0 120 120"><circle class="ring-bg" cx="60" cy="60" r="52"/><circle class="ring-fill" cx="60" cy="60" r="52" id="ring-monthly-fill"/></svg>
+              <div class="ring-value" id="val-monthly">0</div>
+            </div>
+            <div class="stat-limit" id="limit-monthly">/ unlimited</div>
+          </div>
+          <div class="stat-card stat-info">
+            <div class="stat-label">Active Keys</div>
+            <div class="stat-big" id="stat-keys">0</div>
+            <div class="stat-sub">API keys generated</div>
+          </div>
+        </div>
+
+        <!-- Analytics Chart -->
+        <div class="chart-section">
+          <div class="chart-header">
+            <h3>API Usage — Last 7 Days</h3>
+            <div class="chart-stats">
+              <div class="chart-stat"><span class="chart-stat-label">Total Calls</span><span class="chart-stat-value" id="stat-calls">0</span></div>
+              <div class="chart-stat"><span class="chart-stat-label">Total Tokens</span><span class="chart-stat-value" id="stat-tokens">0</span></div>
+              <div class="chart-stat"><span class="chart-stat-label">Avg Latency</span><span class="chart-stat-value" id="stat-latency">0ms</span></div>
+            </div>
+          </div>
+          <div class="chart-canvas-wrap">
+            <canvas id="chart-canvas"></canvas>
+          </div>
+        </div>
+
+        <!-- Insights: Trending Models + Top Project -->
+        <div class="insights-grid">
+          <div class="insight-card">
+            <div class="insight-header">
+              <h3>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" width="16" height="16"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.1-2.8-2.8L3 18.1"/></svg>
+                Your Trending Models
+              </h3>
+              <span class="insight-sub">Based on your usage</span>
+            </div>
+            <div id="trending-models-list" class="trending-models-list">
+              <div class="empty-state-sm">No model usage yet — make a few API calls to see trends here.</div>
+            </div>
+          </div>
+
+          <div class="insight-card">
+            <div class="insight-header">
+              <h3>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" width="16" height="16"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+                Your Top Project
+              </h3>
+              <span class="insight-sub">By call volume</span>
+            </div>
+            <div id="top-projects-list" class="top-projects-list">
+              <div class="empty-state-sm">No project activity yet — link a key to a project and start calling.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+          <button class="action-card" onclick="navigateTo('/app/' + state.user.uid + '/keys')">
+            <span class="action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="28"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.78 7.78 5.5 5.5 0 017.78-7.78zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg></span>
+            <span class="action-label">Generate API Key</span>
+          </button>
+          <button class="action-card" onclick="navigateTo('/app/' + state.user.uid + '/vault')">
+            <span class="action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="28"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span>
+            <span class="action-label">Setup Key Vault</span>
+          </button>
+          <button class="action-card" onclick="navigateTo('/app/' + state.user.uid + '/playground')">
+            <span class="action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="28"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
+            <span class="action-label">Try Playground</span>
+          </button>
+          <button class="action-card" onclick="navigateTo('/app/' + state.user.uid + '/finetune')">
+            <span class="action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="28"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg></span>
+            <span class="action-label">Fine Tune Agent</span>
+          </button>
+          <button class="action-card" onclick="navigateTo('/app/' + state.user.uid + '/logs')">
+            <span class="action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="28"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
+            <span class="action-label">View Logs</span>
+          </button>
+        </div>
+      </div>
+
+
+      <!-- Keys View -->
+      <div id="view-keys" class="view">
+        <div class="view-header">
+          <h2>API Keys</h2>
+          <button id="btn-generate-key" class="btn btn-primary">+ Generate Key</button>
+        </div>
+        <p class="view-desc">Create scoped API keys for auto-routing or specific agents. Each scope has different token consumption.</p>
+
+        <!-- Key Generation Modal (inline) -->
+        <div id="keygen-panel" class="panel lg-panel" style="display:none">
+          <h3>Generate New API Key</h3>
+          <div class="lg-field">
+            <label class="lg-label">Key Name</label>
+            <input type="text" id="keygen-name" class="lg-input" placeholder="e.g., Production Backend" />
+          </div>
+          <div class="lg-field">
+            <label class="lg-label">Scope</label>
+            <select id="keygen-scope" class="lg-select">
+              <option value="all">All Access — auto-routing + all agents (~1K-15K tokens)</option>
+              <option value="auto">Auto Routing Only — /v1/chat (~5K-15K tokens)</option>
+              <option value="mcp">🤖 MCP Access — Claude, Cursor, VS Code (full platform)</option>
+              <optgroup label="Agent-Specific (~1K-4K tokens)">
+                <option value="agent:ceo">CEO Agent</option>
+                <option value="agent:cfo">CFO Agent</option>
+                <option value="agent:sales">Sales Agent</option>
+                <option value="agent:support">Support Agent</option>
+                <option value="agent:research">Research Agent</option>
+                <option value="agent:marketing">Marketing Agent</option>
+                <option value="agent:legal">Legal Agent</option>
+              </optgroup>
+            </select>
+          </div>
+          <div class="lg-field">
+            <label class="lg-label">Link to Project <span class="form-hint">optional — enables memory</span></label>
+            <select id="keygen-project" class="lg-select">
+              <option value="">No Project (standalone key)</option>
+            </select>
+          </div>
+          <div class="lg-toggle-row">
+            <label class="toggle-label">
+              <input type="checkbox" id="keygen-playground" class="toggle-checkbox" />
+              <span class="toggle-track"><span class="toggle-thumb"></span></span>
+              <span class="lg-toggle-title">Playground Mode</span>
+            </label>
+            <p class="lg-toggle-desc">
+              Enables multi-turn conversation on the backend (24hr TTL, 20 message limit). Without this, every call is stateless — the playground UI still works but the AI won't remember previous messages.
+            </p>
+          </div>
+          <div class="lg-toggle-row" id="keygen-public-facing-group">
+            <label class="toggle-label">
+              <input type="checkbox" id="keygen-public-facing" class="toggle-checkbox" />
+              <span class="toggle-track"><span class="toggle-thumb"></span></span>
+              <span class="lg-toggle-title">🌍 Public-Facing Key</span>
+            </label>
+            <p class="lg-toggle-desc">
+              For customer-facing use (e.g. a support widget). Only sees memory facts marked <strong>Public</strong> in Fine Tune — <strong>Internal</strong> facts are never loaded into this key's context. Can't be combined with Playground Mode.
+            </p>
+          </div>
+          <div class="form-actions">
+            <button id="btn-keygen-submit" class="lg-btn-primary">Generate</button>
+            <button id="btn-keygen-cancel" class="lg-btn-ghost">Cancel</button>
+          </div>
+        </div>
+
+        <!-- Generated Key Display (shown once) -->
+        <div id="keygen-result" class="panel lg-panel panel-success" style="display:none">
+          <div class="panel-header">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.78 7.78 5.5 5.5 0 017.78-7.78zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+            <h3>Your API Key</h3>
+          </div>
+          <p class="panel-warn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Copy this key and store it safely. You can also view it later by clicking the key in the list below.
+          </p>
+          <div class="key-display">
+            <code id="keygen-raw-key"></code>
+            <button id="btn-copy-keygen" class="btn btn-sm btn-ghost">Copy</button>
+          </div>
+        </div>
+
+        <!-- Keys List -->
+        <div id="keys-list" class="keys-list"></div>
+      </div>
+
+      <!-- Vault View -->
+      <div id="view-vault" class="view">
+
+        <!-- ── Header ─────────────────────────────────────── -->
+        <div class="vault-header">
+          <div class="vault-header-left">
+            <div class="vault-icon-wrap">
+              <svg class="vault-lock-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="22" height="22"><rect x="3" y="11" width="18" height="11" rx="2.5"/><path d="M7 11V7a5 5 0 0110 0v4"/><circle cx="12" cy="16.5" r="1.2" fill="currentColor" stroke="none"/></svg>
+            </div>
+            <div>
+              <h2 class="vault-title">AI Key Vault</h2>
+              <p class="vault-subtitle">End-to-end encrypted · Zero-knowledge</p>
+            </div>
+          </div>
+          <div class="vault-enc-pill">
+            <span class="vault-enc-dot"></span>
+            AES-256-GCM
+          </div>
+        </div>
+
+        <!-- ── Zero-Knowledge Banner ──────────────────────── -->
+        <div class="vault-zk-banner">
+          <div class="vault-zk-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10" stroke-width="2"/></svg>
+          </div>
+          <div class="vault-zk-text">
+            <span class="vault-zk-title">Zero-Knowledge Architecture</span>
+            <span class="vault-zk-desc">Your keys are AES-256-GCM encrypted before storage. Plaintext is never persisted — only held in-memory during your API call and then discarded.</span>
+          </div>
+          <div class="vault-zk-badges">
+            <span class="vault-zk-badge">Client-side encrypt</span>
+            <span class="vault-zk-badge">No plaintext storage</span>
+          </div>
+        </div>
+
+        <!-- ── Provider Quick-Select ──────────────────────── -->
+        <div class="vault-providers-row">
+          <span class="vault-providers-label">Supported Providers</span>
+          <div class="vault-provider-pills">
+            <div class="vault-provider-pill" data-provider="openai">
+              <span class="vpp-icon">🟢</span>
+              <span>OpenAI</span>
+            </div>
+            <div class="vault-provider-pill" data-provider="anthropic">
+              <span class="vpp-icon">🟠</span>
+              <span>Anthropic</span>
+            </div>
+            <div class="vault-provider-pill" data-provider="gemini">
+              <span class="vpp-icon">🔵</span>
+              <span>Gemini</span>
+            </div>
+            <div class="vault-provider-pill" data-provider="groq">
+              <span class="vpp-icon">⚡</span>
+              <span>Groq</span>
+            </div>
+            <div class="vault-provider-pill" data-provider="mistral">
+              <span class="vpp-icon">🌀</span>
+              <span>Mistral</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Add Key Glass Panel ────────────────────────── -->
+        <div class="vault-glass-panel" id="vault-add-panel">
+          <div class="vgp-header">
+            <div class="vgp-header-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </div>
+            <h3 class="vgp-title">Add Provider Key</h3>
+          </div>
+
+          <!-- API Key field -->
+          <div class="vgp-field">
+            <label class="vgp-label" for="vault-apikey">Provider API Key</label>
+            <div class="vgp-input-wrap" id="vault-key-wrap">
+              <span class="vgp-input-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="15" height="15"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.78 7.78 5.5 5.5 0 017.78-7.78zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+              </span>
+              <input class="vgp-input" type="password" id="vault-apikey" aria-label="Provider API Key" placeholder="sk-... or AIza... or gsk_..." autocomplete="off" spellcheck="false" />
+              <button class="vgp-eye" type="button" id="vault-key-eye" aria-label="Toggle visibility" tabindex="-1">
+                <svg class="eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="15" height="15"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg class="eye-closed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="15" height="15" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24M1 1l22 22"/></svg>
+              </button>
+            </div>
+            <!-- Provider auto-detect chip -->
+            <div id="vault-provider-detect" class="vault-detect-chip" style="display:none">
+              <span id="vault-provider-icon"></span>
+              <span id="vault-provider-name" class="detect-name"></span>
+              <span class="detect-tag">Auto-detected</span>
+            </div>
+          </div>
+
+          <!-- Default Model (shown after detect) -->
+          <div id="vault-model-select" class="vgp-field" style="display:none">
+            <label class="vgp-label" for="vault-model">Default Model</label>
+            <div class="vgp-select-wrap">
+              <select id="vault-model" class="vgp-select"></select>
+              <span class="vgp-select-arrow">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="11" height="11"><polyline points="6 9 12 15 18 9"/></svg>
+              </span>
+            </div>
+          </div>
+
+          <!-- Password field -->
+          <div class="vgp-field">
+            <label class="vgp-label" for="vault-password">Encryption Password</label>
+            <div class="vgp-input-wrap">
+              <span class="vgp-input-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="15" height="15"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+              </span>
+              <input class="vgp-input" type="password" id="vault-password" aria-label="Vault Password" placeholder="Min 8 characters" autocomplete="new-password" />
+              <button class="vgp-eye" type="button" id="vault-pw-eye" aria-label="Toggle visibility" tabindex="-1">
+                <svg class="eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="15" height="15"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg class="eye-closed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="15" height="15" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24M1 1l22 22"/></svg>
+              </button>
+            </div>
+            <!-- Password strength bar -->
+            <div class="vault-pw-strength" id="vault-pw-strength" style="display:none">
+              <div class="pw-strength-bar">
+                <div class="pw-strength-fill" id="vault-pw-fill"></div>
+              </div>
+              <span class="pw-strength-label" id="vault-pw-label">Weak</span>
+            </div>
+            <p class="vgp-hint">Used to encrypt your key locally. We never store this password.</p>
+          </div>
+
+          <!-- Submit -->
+          <button id="btn-vault-store" class="vault-submit-btn">
+            <span class="vsb-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            </span>
+            <span class="vsb-text">Encrypt &amp; Store</span>
+            <span class="vsb-shimmer"></span>
+          </button>
+        </div>
+
+        <!-- ── Stored Keys List ────────────────────────────── -->
+        <div class="vault-list-header" id="vault-list-header" style="display:none">
+          <span class="vlh-title">Stored Keys</span>
+          <span class="vlh-count" id="vault-key-count">0 keys</span>
+        </div>
+        <div id="vault-list" class="vault-list"></div>
+
+      </div>
+
+      <!-- Playground View -->
+      <div id="view-playground" class="view">
+        <div class="view-header">
+          <h2>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            API Playground
+          </h2>
+          <div id="pg-status-badge" class="status-badge">Ready</div>
+        </div>
+
+        <div class="playground-layout">
+          <!-- Conversation History Panel (leftmost) -->
+          <div class="pg-history-panel">
+            <div class="pg-history-header">
+              <span class="pg-history-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                History
+              </span>
+              <button id="btn-pg-new-conv" class="btn btn-sm btn-ghost" title="New conversation" style="padding:4px 8px;font-size:0.7rem;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                New
+              </button>
+            </div>
+            <div id="pg-history-list" class="pg-history-list">
+              <div class="pg-skeleton-history-item"></div>
+              <div class="pg-skeleton-history-item"></div>
+              <div class="pg-skeleton-history-item"></div>
+            </div>
+          </div>
+
+          <!-- Config Sidebar -->
+          <div class="pg-sidebar">
+            <div class="form-group">
+              <label>Agent</label>
+              <select id="pg-agent" aria-label="Agent">
+                <option value="chat">Auto Route (CEO Orchestrator)</option>
+                <option value="ceo">CEO — Strategic</option>
+                <option value="cfo">CFO — Financial</option>
+                <option value="sales">Sales — Revenue</option>
+                <option value="support">Support — Service</option>
+                <option value="research">Research — Analysis</option>
+                <option value="marketing">Marketing — Creative</option>
+                <option value="legal">Legal — Compliance</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label>Provider</label>
+              <select id="pg-provider" aria-label="Provider">
+                <option value="gemini">Google Gemini</option>
+                <option value="openai">OpenAI</option>
+                <option value="anthropic">Anthropic</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label>Model <span class="form-hint">optional</span></label>
+              <select id="pg-model" aria-label="Model">
+                <option value="">Default (auto)</option>
+              </select>
+            </div>
+            
+            <hr class="sidebar-divider" />
+
+            <!-- Key Selection -->
+            <div class="form-group">
+              <label>Aeldorado API Key</label>
+              <select id="pg-key-select" aria-label="Select API Key">
+                <option value="">— Select a key —</option>
+              </select>
+              <div id="pg-key-info" style="margin-top:6px; display:none;">
+                <code id="pg-key-prefix-display" style="font-size:0.7rem; color:var(--text-muted); font-family:var(--font-mono);"></code>
+              </div>
+            </div>
+
+            <!-- Memory Status Chip -->
+            <div id="pg-memory-chip" style="display:none; margin-bottom:var(--space-3);">
+              <div id="pg-memory-chip-inner" class="proj-memory-status" style="font-size:0.78rem; padding:6px 12px;">
+                <span id="pg-memory-dot"></span>
+                <span id="pg-memory-label"></span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Encryption Password</label>
+              <input type="password" id="pg-password" aria-label="Playground Vault Password" placeholder="Vault password" />
+            </div>
+
+            <!-- Active Conv ID (compact) -->
+            <div id="pg-conv-wrap" style="margin-top:var(--space-3);display:none">
+              <span class="form-hint" style="display:block;font-size:0.7rem;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="10" height="10"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                Active: <code id="pg-conv-id" style="font-size:0.65rem;">—</code>
+              </span>
+            </div>
+          </div>
+
+          <!-- Right Chat Area -->
+          <div class="pg-chat-area">
+            <div id="playground-messages" class="pg-messages">
+              <div class="chat-message agent">
+                <div class="chat-avatar">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                </div>
+                <div class="chat-content">
+                  <p>Welcome to the Aeldorado Playground.</p>
+                  <p>Select an API key and password from the sidebar, then send a message to begin.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="pg-chat-input-wrapper">
+              <div class="pg-chat-input-container">
+                <textarea id="pg-message" rows="1" placeholder="Message the AI..." aria-label="Message"></textarea>
+                <button type="button" id="btn-pg-send" class="btn-chat-send" title="Send Request">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                </button>
+              </div>
+              <div class="pg-chat-footer">
+                AI responses may be inaccurate. Please verify important information.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Code Snippets -->
+        <div class="snippets">
+          <h3>Code Examples</h3>
+          <div class="snippet-tabs">
+            <button class="snippet-tab active" data-lang="curl">cURL</button>
+            <button class="snippet-tab" data-lang="python">Python</button>
+            <button class="snippet-tab" data-lang="javascript">JavaScript</button>
+          </div>
+          <pre class="snippet-code" id="snippet-code"></pre>
+        </div>
+      </div>
+
+      <!-- Logs View (NEW) -->
+      <div id="view-logs" class="view">
+        <div class="view-header">
+          <h2>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg>
+            Request Logs
+          </h2>
+          <div class="header-meta">
+            <button class="btn btn-sm btn-ghost" onclick="navigateTo('/app/' + state.user.uid + '/logs')">Refresh</button>
+          </div>
+        </div>
+        <div id="logs-list"></div>
+      </div>
+
+      <!-- Settings View (NEW) -->
+      <div id="view-settings" class="view">
+        <div class="view-header">
+          <h2>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+            Settings
+          </h2>
+        </div>
+
+        <div class="settings-sections">
+
+          <!-- MCP Agent Access -->
+          <div class="settings-card" id="mcp-vault-card">
+            <h3>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18" style="margin-right:6px;vertical-align:middle;color:var(--accent-text)"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+              MCP Agent Access
+            </h3>
+            <p class="settings-desc">Enable Claude Desktop, Claude.ai, and other MCP clients to call your AI agents without entering your vault password each time. Your provider keys are re-encrypted with a server-side secret.</p>
+
+            <div class="settings-row" style="margin-bottom: var(--space-4)">
+              <div>
+                <div class="settings-row-label">Status</div>
+                <div class="settings-row-sub" id="mcp-vault-status-text">Checking...</div>
+              </div>
+              <div id="mcp-vault-status-badge" class="status-badge badge-error">Disabled</div>
+            </div>
+
+            <div id="mcp-vault-enable-form">
+              <div class="form-group">
+                <label class="form-label">Vault Password</label>
+                <div style="position:relative">
+                  <input type="password" id="mcp-vault-password-input" class="form-control" placeholder="Enter your vault password" autocomplete="off" />
+                  <button type="button" class="vgp-eye" style="position:absolute;right:10px;top:50%;transform:translateY(-50%)" onclick="window._toggleMcpVaultPwEye()" aria-label="Toggle visibility">
+                    <svg id="mcp-vault-eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  </button>
+                </div>
+              </div>
+              <div style="display:flex;gap:var(--space-3);flex-wrap:wrap;margin-top:var(--space-4)">
+                <button id="btn-mcp-vault-enable" class="btn btn-primary" onclick="window._enableMcpVault()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M5 13l4 4L19 7"/></svg>
+                  Enable MCP Agent Access
+                </button>
+              </div>
+            </div>
+
+            <div id="mcp-vault-enabled-form" style="display:none">
+              <div class="info-banner" style="margin-bottom:var(--space-4)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M5 13l4 4L19 7"/></svg>
+                <span>MCP clients can now call your agents. If you update vault keys, sync again.</span>
+              </div>
+              <div style="display:flex;gap:var(--space-3);flex-wrap:wrap;align-items:flex-end">
+                <div class="form-group" style="flex:1;min-width:200px;margin-bottom:0">
+                  <input type="password" id="mcp-vault-sync-password-input" class="form-control" placeholder="Vault password (to re-sync)" autocomplete="off" />
+                </div>
+                <button class="btn btn-ghost" onclick="window._syncMcpVault()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+                  Sync Keys
+                </button>
+                <button class="btn btn-danger" onclick="window._disableMcpVault()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  Disable
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-card">
+            <h3>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18" style="margin-right:6px;vertical-align:middle;color:var(--accent-text)"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              IP Allowlist
+            </h3>
+            <p class="settings-desc">Restrict API key access to specific IPs. Leave empty to allow all IPs.</p>
+            <div class="settings-row">
+              <div>
+                <div class="settings-row-label">Allowed IPs</div>
+                <div class="settings-row-sub" id="ip-count">All IPs allowed</div>
+              </div>
+            </div>
+            <div class="form-group" style="margin-top:var(--space-4)">
+              <textarea id="ip-allowlist-input" class="ip-textarea" placeholder="Enter one IP per line:&#10;192.168.1.1&#10;10.0.0.1&#10;..." rows="6"></textarea>
+            </div>
+            <button id="btn-save-ip" class="btn btn-primary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              Save Allowlist
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Docs View -->
+      <div id="view-docs" class="view" style="height:100%;">
+        <div class="docs-content" id="docs-content" style="height:100%;"></div>
+      </div>
+      <!-- Projects View -->
+      <div id="view-projects" class="view">
+        <div class="view-header">
+          <h2>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+            Projects &amp; Memory
+          </h2>
+          <div class="header-meta">
+            <span id="projects-stats" class="header-stat">— / 10 projects</span>
+            <button id="btn-create-project" class="btn btn-primary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              New Project
+            </button>
+          </div>
+        </div>
+
+        <!-- Create Project Panel -->
+        <div id="proj-create-panel" class="panel-card" style="display:none; margin-bottom: var(--space-6);">
+          <h3 class="panel-title">Create New Project</h3>
+          <p class="panel-desc">Projects group API keys under a shared persistent memory pool. Memory requires Starter tier or above.</p>
+          <div class="form-group">
+            <label class="form-label">Project Name</label>
+            <input type="text" id="proj-create-name" class="form-control" placeholder="e.g., Customer Support Bot" maxlength="60" />
+          </div>
+          <div class="panel-actions">
+            <button id="btn-proj-create-submit" class="btn btn-primary">Create Project</button>
+            <button id="btn-proj-create-cancel" class="btn btn-ghost">Cancel</button>
+          </div>
+        </div>
+
+        <!-- Info Banner -->
+        <div class="info-banner">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>Memory is <strong>per-project</strong>. Link an API key to a project on generation. Facts auto-extracted after <strong>20 messages</strong>. Free tier: memory hard-blocked server-side.</span>
+        </div>
+
+        <!-- Project Cards Grid -->
+        <div id="projects-list" class="projects-grid"></div>
+      </div>
+
+      <!-- Fine Tune View -->
+      <div id="view-finetune" class="view">
+        <div class="view-header">
+          <h2>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24"><path d="M12 2a4 4 0 014 4c0 1.5-.8 2.5-1.5 3.5S13 11.5 13 13v1"/><path d="M9.5 9.5A4 4 0 0112 2"/><line x1="12" y1="17" x2="12" y2="17.01"/></svg>
+            Fine Tune
+          </h2>
+          <div class="header-meta">
+            <select id="ft-project-select" class="form-control" style="width:220px;"></select>
+          </div>
+        </div>
+
+        <div class="info-banner">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>Manually feed facts to a specific agent, or to <strong>Universal</strong> so every agent shares it. Mark a fact <strong>Public</strong> only if it's safe for customer-facing keys to see — <strong>Internal</strong> facts are never sent to public-facing keys, even inside Playground.</span>
+        </div>
+
+        <!-- Add Fact Panel -->
+        <div class="panel-card" style="margin-bottom: var(--space-6);">
+          <h3 class="panel-title">Add a Fact</h3>
+          <div class="form-group">
+            <label class="form-label">Fact</label>
+            <textarea id="ft-fact-input" class="form-control" rows="2" placeholder="e.g., Refunds are processed within 5-7 business days" maxlength="500"></textarea>
+          </div>
+          <div style="display:flex; gap:var(--space-3); flex-wrap:wrap;">
+            <div class="form-group" style="flex:1; min-width:160px;">
+              <label class="form-label">Scope</label>
+              <select id="ft-scope-select" class="form-control">
+                <option value="universal">🌐 Universal (all agents)</option>
+              </select>
+            </div>
+            <div class="form-group" style="flex:1; min-width:160px;">
+              <label class="form-label">Visibility</label>
+              <select id="ft-visibility-select" class="form-control">
+                <option value="internal">🔒 Internal (your keys only)</option>
+                <option value="public">🌍 Public (customer-facing keys too)</option>
+              </select>
+            </div>
+          </div>
+          <div class="panel-actions">
+            <button id="btn-ft-add-fact" class="btn btn-primary">Add Fact</button>
+          </div>
+        </div>
+
+        <!-- Agent Tabs -->
+        <div id="ft-agent-tabs" class="ft-tabs"></div>
+
+        <!-- Fact List -->
+        <div id="ft-facts-list"></div>
+      </div>
+
+      <!-- ═══ BILLING VIEW ═══ -->
+      <div id="view-billing" class="view">
+        <!-- Dynamically rendered by loadBilling() in app.js -->
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ═══ MODAL OVERLAY ═══ -->
+  <div id="modal-overlay" class="modal-overlay" style="display:none">
+    
+    <!-- Default Dynamic Modal Content -->
+    <div class="modal-content" id="modal-content" style="display:none"></div>
+
+    <!-- ═══ BILLING PAYMENT MODAL ═══ -->
+    <div id="modal-billing" class="modal-content" style="display:none">
+      <div class="billing-modal-header">
+        <h3>Confirm Subscription</h3>
+        <button id="btn-billing-modal-cancel" class="lg-modal-close" aria-label="Close" style="background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.5);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="billing-modal-plan-summary">
+        <div>
+          <div class="modal-plan-name" id="billing-modal-plan-name">Plan</div>
+          <div class="modal-plan-cycle" id="billing-modal-plan-cycle">Cycle</div>
+        </div>
+        <div class="modal-plan-price" id="billing-modal-plan-price">₹0</div>
+      </div>
+      <button id="btn-pay-now" class="plan-card-btn btn-upgrade">Pay Now</button>
+      <p class="billing-modal-note" id="billing-modal-note"></p>
+    </div>
+
+    <!-- API Key Details Modal -->
+    <div id="modal-key-details" class="modal-content lg-modal" style="display:none; max-width:500px;">
+      <div class="lg-modal-header">
+        <h2 class="lg-modal-title">API Key Details</h2>
+        <button id="btn-close-key-modal" class="lg-modal-close" aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      
+      <div class="lg-modal-body">
+        <!-- Key display with copy -->
+        <div class="lg-field">
+          <label class="lg-label">Full API Key</label>
+          <div class="lg-key-box">
+            <code id="mdl-key-raw" class="lg-key-code"></code>
+            <button id="btn-copy-key" class="lg-copy-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              Copy
+            </button>
+          </div>
+        </div>
+
+        <!-- Name -->
+        <div class="lg-field">
+          <label class="lg-label">Name</label>
+          <input type="text" id="mdl-key-name" readonly class="lg-input" />
+        </div>
+
+        <!-- Scope -->
+        <div class="lg-field">
+          <label class="lg-label">Scope</label>
+          <select id="mdl-key-scope" class="lg-select">
+            <option value="all">All Agents (Full Access)</option>
+            <option value="auto">Auto Route (CEO Orchestrator)</option>
+            <option value="mcp">🤖 MCP — Claude, Cursor, VS Code</option>
+            <option value="agent:ceo">CEO — Strategic</option>
+            <option value="agent:cfo">CFO — Financial</option>
+            <option value="agent:sales">Sales — Revenue</option>
+            <option value="agent:support">Support — Service</option>
+            <option value="agent:research">Research — Analysis</option>
+            <option value="agent:marketing">Marketing — Creative</option>
+            <option value="agent:legal">Legal — Compliance</option>
+          </select>
+        </div>
+
+        <!-- Assign to Project -->
+        <div class="lg-field">
+          <label class="lg-label">Assign to Project</label>
+          <select id="mdl-key-project" class="lg-select">
+            <option value="">No Project (standalone)</option>
+          </select>
+          <div id="mdl-proj-memory-hint" class="lg-hint" style="display:none;"></div>
+        </div>
+
+        <!-- Public Facing Toggle -->
+        <div class="lg-toggle-row">
+          <label class="toggle-label">
+            <input type="checkbox" id="mdl-key-public-facing" class="toggle-checkbox" />
+            <span class="toggle-track"><span class="toggle-thumb"></span></span>
+            <span class="lg-toggle-title">🌍 Public-Facing Key</span>
+          </label>
+          <p class="lg-toggle-desc">
+            Only sees memory facts marked <strong>Public</strong> in Fine Tune. <strong>Internal</strong> facts are never loaded into this key's context, even if it has full project access.
+          </p>
+        </div>
+      </div>
+
+      <div class="lg-modal-footer">
+        <button id="btn-revoke-modal" class="lg-btn-danger">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+          Delete Key
+        </button>
+        <button id="btn-save-scope" class="lg-btn-primary">Save Changes</button>
+      </div>
+    </div>
+
+    <!-- Memory Inspect Modal -->
+    <div id="modal-memory" class="modal-content lg-modal" style="display:none; max-width:620px;">
+      <div class="lg-modal-header">
+        <div>
+          <h2 class="lg-modal-title">🧠 Project Memory</h2>
+          <div id="mem-modal-proj-id" class="lg-modal-subtitle"></div>
+        </div>
+        <button id="btn-close-memory-modal" class="lg-modal-close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="lg-modal-body" id="mem-modal-facts" style="max-height:420px; overflow-y:auto;"></div>
+      <div class="lg-modal-footer">
+        <button id="btn-clear-memory" class="lg-btn-danger">🗑 Clear All Memory</button>
+        <button class="lg-btn-ghost" id="btn-mem-modal-close">Close</button>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,28 @@
+{
+  "name": "aeldorado-api",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Aeldorado — The Legendary Intelligence. Public AI API Platform by Solanacy Technologies.",
+  "main": "server.js",
+  "scripts": {
+    "start": "PLAYWRIGHT_BROWSERS_PATH=0 node server.js",
+    "dev": "node --watch server.js",
+    "cleanup": "node scripts/cron-cleanup.js",
+    "postinstall": "PLAYWRIGHT_BROWSERS_PATH=0 npx playwright install --force chromium"
+  },
+  "dependencies": {
+    "@google/genai": "^1.0.0",
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "cheerio": "^1.0.0",
+    "cors": "^2.8.5",
+    "playwright": "^1.48.0",
+    "express": "^4.21.0",
+    "express-rate-limit": "^7.4.0",
+    "firebase-admin": "^13.0.0",
+    "helmet": "^8.0.0",
+    "zod": "^4.4.3"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

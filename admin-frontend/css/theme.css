@@ -1,0 +1,425 @@
+/* ═══════════════════════════════════════════════════════════
+   Aeldorado — Control Room Theme
+   A precise, instrument-panel dark UI. Every number is tabular,
+   every label is a small-cap eyebrow, every border is a hairline.
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Surfaces — layered near-black, not pure black ────────── */
+  --bg:            #0a0a0c;
+  --surface:       #131316;
+  --surface-2:     #18181c;
+  --surface-hover: #1f1f24;
+  --border:        #232328;
+  --border-strong: #2e2e35;
+
+  /* ── Accent — precise cool blue, not pastel ───────────────── */
+  --primary:            #5b9dfa;
+  --primary-hover:      #78aefb;
+  --primary-container:  rgba(91, 157, 250, 0.12);
+  --primary-container-strong: rgba(91, 157, 250, 0.2);
+
+  /* ── Text ──────────────────────────────────────────────────── */
+  --text:           #eceef1;
+  --text-secondary: #a3a7b0;
+  --text-muted:     #6b6f78;
+
+  /* ── Status ────────────────────────────────────────────────── */
+  --success:            #4ade80;
+  --success-container:  rgba(74, 222, 128, 0.12);
+  --error:               #f76464;
+  --error-container:    rgba(247, 100, 100, 0.12);
+  --warning:            #f5b342;
+  --warning-container:  rgba(245, 179, 66, 0.12);
+  --info: var(--primary);
+
+  /* ── Type ──────────────────────────────────────────────────── */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', ui-monospace, monospace;
+
+  /* ── Spacing scale ─────────────────────────────────────────── */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+
+  /* ── Radius ────────────────────────────────────────────────── */
+  --radius-sm: 6px;
+  --radius: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  /* ── Elevation ─────────────────────────────────────────────── */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.35), 0 1px 3px rgba(0,0,0,0.4);
+  --shadow-lg: 0 12px 32px rgba(0,0,0,0.45), 0 2px 6px rgba(0,0,0,0.3);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background:
+    radial-gradient(1200px 600px at 100% -10%, rgba(91,157,250,0.05), transparent 60%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  line-height: 1.5;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: var(--primary-container-strong);
+  color: var(--text);
+}
+
+/* Thin, quiet scrollbars — fits an instrument-panel feel */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+*::-webkit-scrollbar { width: 8px; height: 8px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: var(--radius-full); }
+*::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ── Common Components ───────────────────────────────────── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 18px;
+  border-radius: var(--radius);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
+  border: 1px solid transparent;
+  gap: 8px;
+  white-space: nowrap;
+  font-family: inherit;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: #05070d;
+  border: 1px solid var(--primary);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+  box-shadow: 0 0 0 3px var(--primary-container);
+}
+
+.btn-outline {
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  color: var(--text);
+}
+
+.btn-outline:hover:not(:disabled) {
+  background: var(--surface-hover);
+  border-color: var(--text-muted);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid transparent;
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+.btn-danger {
+  background: var(--error-container);
+  color: var(--error);
+  border: 1px solid rgba(247, 100, 100, 0.3);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: rgba(247, 100, 100, 0.18);
+  border-color: rgba(247, 100, 100, 0.5);
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 0.75rem;
+}
+
+.btn-lg {
+  padding: 12px 24px;
+  font-size: 0.9375rem;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+/* ── Input Fields ────────────────────────────────────────── */
+
+.studio-input, .studio-select, .studio-textarea {
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  color: var(--text);
+  padding: 9px 13px;
+  border-radius: var(--radius-sm);
+  font-size: 0.8125rem;
+  width: 100%;
+  font-family: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  outline: none;
+}
+
+.studio-input::placeholder {
+  color: var(--text-muted);
+}
+
+.studio-input:focus, .studio-select:focus, .studio-textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-container);
+}
+
+.studio-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.studio-select {
+  cursor: pointer;
+}
+
+/* ── Tables ──────────────────────────────────────────────── */
+
+.studio-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.studio-table th {
+  text-align: left;
+  padding: 11px 16px;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-weight: 700;
+}
+
+.studio-table td {
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.8125rem;
+  color: var(--text);
+  vertical-align: middle;
+}
+
+.studio-table tr:last-child td {
+  border-bottom: none;
+}
+
+.studio-table tbody tr {
+  transition: background 0.1s ease;
+}
+
+.studio-table tbody tr:hover {
+  background: var(--surface-hover);
+}
+
+.studio-table td.clickable {
+  cursor: pointer;
+  color: var(--primary);
+  font-weight: 500;
+}
+
+.studio-table td.clickable:hover {
+  text-decoration: underline;
+}
+
+/* ── Badges ──────────────────────────────────────────────── */
+
+.status-badge {
+  font-size: 0.6875rem;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+}
+
+.status-badge::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+.status-badge.success { background: var(--success-container); color: var(--success); border-color: rgba(74, 222, 128, 0.25); }
+.status-badge.error { background: var(--error-container); color: var(--error); border-color: rgba(247, 100, 100, 0.25); }
+.status-badge.warning { background: var(--warning-container); color: var(--warning); border-color: rgba(245, 179, 66, 0.25); }
+
+/* Plain (uncolored) badge — used for tier labels etc. */
+.status-badge:not(.success):not(.error):not(.warning) {
+  background: var(--surface-2);
+  color: var(--text-secondary);
+  border-color: var(--border-strong);
+}
+.status-badge:not(.success):not(.error):not(.warning)::before {
+  background: var(--text-muted);
+}
+
+/* ── Empty & Error States ────────────────────────────────── */
+
+.empty-state, .error-state {
+  padding: var(--space-12) var(--space-8);
+  text-align: center;
+  color: var(--text-secondary);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px dashed var(--border-strong);
+  font-size: 0.8125rem;
+}
+
+.error-state {
+  color: var(--error);
+  border-color: rgba(247, 100, 100, 0.3);
+  background: var(--error-container);
+}
+
+.loader-inline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: var(--space-10);
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+}
+
+.loader-inline::before {
+  content: "";
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--border-strong);
+  border-top-color: var(--primary);
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.icon-spin {
+  animation: spin 1s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loader-inline::before,
+  .icon-spin { animation: none; }
+}
+
+/* ── Skeleton loaders ─────────────────────────────────────────
+   Content-shaped placeholders so pages morph into real data
+   instead of popping from a spinner to a full layout. */
+@keyframes skeleton-shimmer {
+  0%   { background-position: -200px 0; }
+  100% { background-position: calc(200px + 100%) 0; }
+}
+
+.skel {
+  background: linear-gradient(90deg, var(--surface-2) 25%, var(--border) 37%, var(--surface-2) 63%);
+  background-size: 400px 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skel { animation: none; opacity: 0.6; }
+}
+
+.skel-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+}
+
+.skel-stat-card {
+  padding: var(--space-5);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.skel-stat-card .skel-label { width: 70%; height: 11px; margin-bottom: var(--space-3); }
+.skel-stat-card .skel-value { width: 45%; height: 24px; }
+
+.skel-table {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.skel-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--border);
+}
+
+.skel-row:last-child { border-bottom: none; }
+
+.skel-row .skel { height: 13px; flex: 1; }
+.skel-row .skel:nth-child(1) { flex: 1.4; }
+.skel-row .skel:nth-child(4) { flex: 0.7; }
+
+.skel-block { height: 14px; }
+.skel-block.wide { width: 100%; }
+.skel-block.short { width: 40%; }
