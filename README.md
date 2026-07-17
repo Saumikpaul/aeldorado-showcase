@@ -8,6 +8,9 @@
 ![Gemini](https://img.shields.io/badge/AI-Google%20Gemini-4285F4?logo=googlegemini&logoColor=white)
 ![MCP](https://img.shields.io/badge/protocol-MCP%20%2B%20OAuth%202.0%20PKCE-8A2BE2)
 ![Netlify](https://img.shields.io/badge/frontend-Netlify-00C7B7?logo=netlify&logoColor=white)
+![Maintained](https://img.shields.io/badge/maintained-yes-brightgreen)
+![PRs](https://img.shields.io/badge/PRs-not%20accepted-lightgrey)
+![Made in India](https://img.shields.io/badge/made%20in-India%20%F0%9F%87%AE%F0%9F%87%B3-FF9933)
 
 > ⚠️ **This is a sanitized, public showcase copy of a production codebase.**
 > Core proprietary logic — agent system prompts, scoring algorithms, and
@@ -103,12 +106,19 @@ prompt-engineer and orchestrate that themselves.
 ## Tech Stack
 
 - **Backend:** Node.js, Express
+  ![Node](https://img.shields.io/badge/-Node.js-339933?logo=node.js&logoColor=white) ![Express](https://img.shields.io/badge/-Express-000000?logo=express&logoColor=white)
 - **AI:** Google Gemini (`@google/genai`), MCP SDK (`@modelcontextprotocol/sdk`)
+  ![Gemini](https://img.shields.io/badge/-Gemini-4285F4?logo=googlegemini&logoColor=white) ![MCP](https://img.shields.io/badge/-MCP-8A2BE2)
 - **Search:** self-hosted metasearch engine + Playwright/Cheerio for live grounding
+  ![Playwright](https://img.shields.io/badge/-Playwright-2EAD33?logo=playwright&logoColor=white)
 - **Database:** Firebase / Firestore
+  ![Firebase](https://img.shields.io/badge/-Firebase-FFCA28?logo=firebase&logoColor=black)
 - **Payments:** Cashfree
+  ![Cashfree](https://img.shields.io/badge/-Cashfree-00D2A0)
 - **Frontend:** vanilla JS/HTML/CSS, deployed on Netlify
+  ![JavaScript](https://img.shields.io/badge/-JavaScript-F7DF1E?logo=javascript&logoColor=black) ![HTML5](https://img.shields.io/badge/-HTML5-E34F26?logo=html5&logoColor=white) ![CSS3](https://img.shields.io/badge/-CSS3-1572B6?logo=css3&logoColor=white) ![Netlify](https://img.shields.io/badge/-Netlify-00C7B7?logo=netlify&logoColor=white)
 - **Security:** AES-256-GCM encryption, OAuth 2.0 + PKCE
+  ![Security](https://img.shields.io/badge/-AES--256--GCM-critical) ![OAuth](https://img.shields.io/badge/-OAuth%202.0%20%2B%20PKCE-critical)
 
 ## Repo Structure
 
@@ -127,6 +137,11 @@ frontend/          → marketing site + docs + API playground
 > Note: the internal admin portal (separate frontend + `routes/admin.js` +
 > `core/admin-auth.js` + `core/anti-abuse.js`) is intentionally not included
 > in this public repo — see disclaimer above.
+
+![Repo Size](https://img.shields.io/github/repo-size/Saumikpaul/aeldorado-showcase)
+![Last Commit](https://img.shields.io/github/last-commit/Saumikpaul/aeldorado-showcase)
+![Top Language](https://img.shields.io/github/languages/top/Saumikpaul/aeldorado-showcase)
+![Stars](https://img.shields.io/github/stars/Saumikpaul/aeldorado-showcase?style=social)
 
 ## Running Locally (stub)
 
@@ -153,3 +168,7 @@ grounding, billing, admin tooling, MCP integration) alongside **D-Dey PMS**,
 a pharmacy management system also built by Solanacy.
 
 Open to opportunities — reach out at **aeldorado@solanacy.in**.
+
+[![Email](https://img.shields.io/badge/Email-aeldorado%40solanacy.in-D14836?logo=gmail&logoColor=white)](mailto:aeldorado@solanacy.in)
+[![Live Product](https://img.shields.io/badge/Live-aeldorado.solanacy.in-6E56CF)](https://aeldorado.solanacy.in)
+[![API Docs](https://img.shields.io/badge/API-api.aeldorado.solanacy.in-2E86AB)](https://api.aeldorado.solanacy.in)
