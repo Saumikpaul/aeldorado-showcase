@@ -222,7 +222,7 @@ export async function orchestrate({ prompt, ai, model, options = {}, memoryWrite
 
     return {
       response_to_user: synthesis.response,
-      response_to_sau:  synthesis.response, // Backward compat
+      response_legacy:  synthesis.response, // Backward compat
       summary:          synthesis.response,
       agentUsed:        "ceo",
       agentsConsulted:  synthesis.agents_used || agentResults.map(r => r.agent),
@@ -246,7 +246,7 @@ export async function orchestrate({ prompt, ai, model, options = {}, memoryWrite
 
     return {
       response_to_user: `Here are the results:\n\n${fallback}`,
-      response_to_sau:  fallback,
+      response_legacy:  fallback,
       agentUsed:        "ceo",
       agentsConsulted:  agentResults.map(r => r.agent),
       subAgents:        agentResults.map(r => ({
