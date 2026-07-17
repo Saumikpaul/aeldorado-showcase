@@ -121,9 +121,9 @@ let db, adminAuth;
 try {
   const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
   initializeApp({ credential: cert(serviceAccount) });
-  db        = getFirestore(undefined, process.env.FIRESTORE_DATABASE_ID || "aeldorado-agentic-era");
+  db        = getFirestore(undefined, process.env.FIRESTORE_DATABASE_ID || "your-project-id"); // [REDACTED — internal infra ID not included in public showcase]
   adminAuth = getAuth();
-  logger.info("Firebase Admin initialized", { databaseId: process.env.FIRESTORE_DATABASE_ID || "aeldorado-agentic-era" });
+  logger.info("Firebase Admin initialized", { databaseId: process.env.FIRESTORE_DATABASE_ID || "your-project-id" });
 } catch (e) {
   logger.error("Firebase Admin init failed", { error: e.message });
   process.exit(1);
@@ -187,10 +187,12 @@ app.options("/.well-known/*",     publicCors);
 // Firebase signInWithRedirect needs /__/auth/ to exist on the same origin as
 // the auth page (api.aeldorado.solanacy.in). Proxy to Firebase Hosting.
 app.use("/__/auth", (req, res) => {
-  const target = `https://aeldorado-agentic-era.firebaseapp.com/__/auth${req.url}`;
+  // [REDACTED — internal Firebase project domain not included in public showcase]
+  const FIREBASE_PROJECT_DOMAIN = process.env.FIREBASE_PROJECT_DOMAIN || "your-project.firebaseapp.com";
+  const target = `https://${FIREBASE_PROJECT_DOMAIN}/__/auth${req.url}`;
   const opts = {
     method: req.method,
-    headers: { ...req.headers, host: "aeldorado-agentic-era.firebaseapp.com" },
+    headers: { ...req.headers, host: FIREBASE_PROJECT_DOMAIN },
   };
   const proxyReq = https.request(target, opts, (proxyRes) => {
     res.writeHead(proxyRes.statusCode, proxyRes.headers);

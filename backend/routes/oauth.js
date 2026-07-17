@@ -310,7 +310,7 @@ function renderAuthorizePage({ clientId, clientName, redirectUri, state, scope, 
       projectId: "your-project-id",
       storageBucket: "your-project.firebasestorage.app",
       messagingSenderId: "YOUR_SENDER_ID",
-      appId: "1:YOUR_SENDER_ID:web:5b05e9d5fa382ccd528e22",
+      appId: "1:YOUR_SENDER_ID:web:YOUR_APP_ID_HASH",
     };
 
     // OAuth params injected server-side — save to sessionStorage so they

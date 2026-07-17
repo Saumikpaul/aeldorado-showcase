@@ -7,7 +7,7 @@ let db;
 try {
   const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
   initializeApp({ credential: cert(serviceAccount) });
-  db = getFirestore(undefined, process.env.FIRESTORE_DATABASE_ID || "aeldorado-agentic-era");
+  db = getFirestore(undefined, process.env.FIRESTORE_DATABASE_ID || "your-project-id"); // [REDACTED — internal infra ID not included in public showcase]
   console.log("[OK] Firebase Admin initialized for Cron Job.");
 } catch (e) {
   console.error("[FATAL] Firebase Admin init failed:", e.message);
