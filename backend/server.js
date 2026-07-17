@@ -25,9 +25,7 @@ import { billingRouter } from "./routes/billing.js";
 import { createMcpHandler } from "./routes/mcp.js";
 import { createOAuthRouter } from "./routes/oauth.js";
 import { mcpVaultRouter } from "./routes/mcpVault.js";
-import { adminRouter } from "./routes/admin.js";
 import { newsRouter } from "./routes/news.js";
-import { requireSuperAdmin } from "./core/admin-auth.js";
 import { listProviders } from "./core/provider-detect.js";
 import { TIER_LIMITS, checkSubscriptionValid } from "./core/billing.js";
 import { ensureUser, getUserDoc }    from "./core/user-manager.js";
@@ -160,37 +158,6 @@ async function dashboardAuth(req, res, next) {
   }
 }
 
-// ── Firebase Auth Middleware (admin panel only — no ensureUser) ─────────────
-// The admin panel fires many rapid successive requests (page loads, tab
-// switches, "load more"). requireSuperAdmin already authorizes purely off
-// the verified token's email — it never reads req.userData — so paying for
-// an extra blocking Firestore read+write (ensureUser) on every single admin
-// request was pure overhead, not a security requirement. This trims that
-// round-trip for /v1/admin/* specifically while leaving dashboardAuth (used
-// by every other authenticated route) untouched.
-async function adminPanelAuth(req, res, next) {
-  // Same reasoning as requireSuperAdmin's guard below: this is mounted on
-  // "/v1" alongside non-admin sibling routers, so it must not intercept
-  // requests that aren't actually headed to /v1/admin/*.
-  if (!req.path.startsWith("/admin")) {
-    return next();
-  }
-
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ error: { code: "auth_required", message: "Authorization header required." } });
-  }
-  try {
-    const token   = authHeader.split(" ")[1];
-    const decoded = await adminAuth.verifyIdToken(token);
-    req.userId       = decoded.uid;
-    req.decodedToken = decoded;
-    next();
-  } catch (e) {
-    return res.status(401).json({ error: { code: "invalid_token", message: "Invalid or expired auth token." } });
-  }
-}
-
 // ── OPTIONS Preflight Handler ────────────────────────────────────────────────
 // Must be before routes to properly handle browser preflight checks
 app.options("/v1/chat",            publicCors);
@@ -208,7 +175,6 @@ app.options("/v1/providers",       publicCors);
 app.options("/v1/billing/webhook", cors({ origin: "*" })); // Cashfree webhook
 app.options("/v1/billing/*",       adminCors);
 app.options("/v1/mcp-vault/*",     adminCors);
-app.options("/v1/admin/*",         adminCors);
 
 // MCP endpoint — public CORS (AI clients connect from anywhere)
 app.options("/mcp",               publicCors);
@@ -356,14 +322,8 @@ app.use("/v1/projects", adminCors, projectsRouter);
 app.post("/v1/billing/webhook", cors({ origin: "*" }), billingRouter);
 app.use("/v1", adminCors, dashboardAuth, billingRouter);
 
-// ── ADMIN routes (adminCors + adminPanelAuth + requireSuperAdmin) ─────────────
-// Triple-gated: origin allowlist, verified Firebase token, then hardcoded
-// email check. Every route in adminRouter inherits all three — none can be
-// added later and accidentally bypass this chain. Uses adminPanelAuth (not
-// dashboardAuth) so admin-panel requests skip ensureUser's Firestore
-// round-trip — requireSuperAdmin authorizes purely off the verified token,
-// it never needs req.userData.
-app.use("/v1", adminCors, adminPanelAuth, requireSuperAdmin, adminRouter);
+// ── Admin routes intentionally not included in this public showcase ───────
+// (internal moderation/user-control endpoints — see README)
 
 app.use("/v1", adminCors, dashboardAuth, (req, res, next) => {
   req.db = db;

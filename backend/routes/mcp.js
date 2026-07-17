@@ -28,7 +28,6 @@ import { getConversation, saveConversationTurn, buildContext } from "../core/con
 import { buildMemoryContext, addFactManually, getMemory, clearMemory, deleteFact, VALID_AGENTS } from "../core/memory.js";
 import { createProject, listProjects as listProjectsFn, deleteProject, getProject, canUseMemory } from "../core/project-manager.js";
 import { checkIPAllowed, getUserDoc, ensureUser } from "../core/user-manager.js";
-import { checkAbuse } from "../core/anti-abuse.js";
 
 import { runCEOAgent } from "../agents/ceo.js";
 import { runCFOAgent } from "../agents/cfo.js";

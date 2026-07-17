@@ -21,9 +21,6 @@ import { logger } from "../core/logger.js";
 const RESEARCH_SYSTEM = `[REDACTED — proprietary system prompt not included in public showcase]
 
 ${GROUNDED_CITATION_RULES}`;
-- "key_facts": use for straightforward factual/informational questions (policy updates, "what is X", "latest on Y") — a few concrete facts pulled from sources, not tied to any business-analysis framing.
-- "market_size", "competitors", "opportunities": only fill these in when the question actually concerns a market, industry, or competitive landscape. Leave as null/empty otherwise — an empty array/null here is a correct answer, not a missing one.
-- "trends": usable more broadly (policy trends, tech trends, market trends) — fill in when the question has a trend-like angle, leave empty otherwise.`;
 
 export async function runResearchAgent({ task, rawMessage, ai, model, options = {} }) {
   const models = getModelList(ai, model);

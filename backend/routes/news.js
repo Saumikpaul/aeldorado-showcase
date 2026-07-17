@@ -8,7 +8,7 @@
 
 import { Router } from "express";
 import { sendError } from "../core/errors.js";
-import { cached } from "../core/admin-cache.js";
+import { cached } from "../core/cache.js";
 import { listPublishedPosts, getPublishedPost, CATEGORIES } from "../core/news-manager.js";
 
 export const newsRouter = Router();

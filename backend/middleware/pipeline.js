@@ -4,13 +4,23 @@
 // Enhanced pipeline: auth → IP check → abuse → billing → per-key rate limit → vault decrypt
 
 import { extractApiKey, verifyApiKey }     from "../core/auth.js";
-import { checkAbuse }                      from "../core/anti-abuse.js";
 import { checkUsage, recordUsage, checkSubscriptionValid } from "../core/billing.js";
 import { decrypt }                         from "../core/encryption.js";
 import { sendError }                       from "../core/errors.js";
 import { checkIPAllowed }                  from "../core/user-manager.js";
-import { getClientIP }                     from "../core/anti-abuse.js";
 import { logger }                      from "../core/logger.js";
+
+// [PROPRIETARY — REDACTED] getClientIP and the free-tier abuse-detection
+// logic (core/anti-abuse.js — device fingerprinting, IP-sharing thresholds,
+// suspension rules) have been removed from this public showcase to avoid
+// publishing exact abuse-detection thresholds/mechanics. The pipeline shape
+// below (auth → IP check → abuse → billing → rate-limit → vault decrypt) is
+// preserved to show the real request-processing architecture.
+function getClientIP(req) {
+  return req.headers["x-forwarded-for"]?.split(",")[0]?.trim()
+    || req.socket?.remoteAddress
+    || "unknown";
+}
 
 // In-memory per-key rate limiter (resets every minute)
 const keyRateMap = new Map();
@@ -74,12 +84,11 @@ export async function checkIPMiddleware(req, res, next) {
 
 /**
  * Middleware: Check for free-tier abuse.
+ * [PROPRIETARY — REDACTED] Real implementation (device fingerprinting,
+ * IP-sharing detection, suspension logic) removed from this public copy —
+ * see core/anti-abuse.js note above. This stub always allows.
  */
 export async function checkAbuseMiddleware(req, res, next) {
-  const result = await checkAbuse(req.db, req.userId, req.tier, req);
-  if (!result.allowed) {
-    return sendError(res, "ACCOUNT_SUSPENDED", result.reason);
-  }
   next();
 }
 

@@ -7,6 +7,13 @@
 > **real architecture, code structure, and engineering patterns** are visible
 > without exposing the actual IP. The live product runs the full,
 > unredacted version.
+>
+> The **internal admin portal** (user management, ban/suspend controls,
+> broadcast messaging, audit logs) and the **abuse-detection/user-control
+> internals** (`core/anti-abuse.js` — device fingerprinting, IP-sharing
+> thresholds, suspension mechanics) are **excluded entirely** from this
+> public repo, not just redacted — publishing exact moderation mechanics
+> would make them trivial to evade.
 
 Built solo by **Saumik Paul**, Founder of **Solanacy Technologies**.
 
@@ -81,8 +88,9 @@ prompt-engineer and orchestrate that themselves.
 - **OAuth 2.0 + PKCE MCP server** — Aeldorado exposes itself as an MCP
   server (`chat`, `call_agent`, `view_logs` tools) so it can be used as a
   connector from Claude and other MCP clients.
-- **Full admin portal** — user management, ban/unban, force-logout, audit
-  logs, broadcast messaging, sub-agent latency breakdown per request.
+- **Full admin portal** *(not included in this public repo)* — user
+  management, ban/unban, force-logout, audit logs, broadcast messaging,
+  sub-agent latency breakdown per request.
 
 ## Tech Stack
 
@@ -106,8 +114,11 @@ backend/
   scripts/         → cron jobs, migrations
   server.js        → entrypoint
 frontend/          → marketing site + docs + API playground
-admin-frontend/    → internal admin portal
 ```
+
+> Note: the internal admin portal (separate frontend + `routes/admin.js` +
+> `core/admin-auth.js` + `core/anti-abuse.js`) is intentionally not included
+> in this public repo — see disclaimer above.
 
 ## Running Locally (stub)
 
