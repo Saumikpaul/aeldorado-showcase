@@ -1,29 +1,31 @@
-// core/searxng-search.js — SearXNG Metasearch Client
+// core/meta-search.js — Self-Hosted Metasearch Client
 // Aeldorado by Solanacy Technologies
 //
-// Primary search source. Calls our own self-hosted SearXNG instance
-// (see the `solanacy-searxng` repo) instead of scraping Google/DuckDuckGo
-// directly from this backend. SearXNG queries multiple upstream engines
-// itself (Google, Bing, DuckDuckGo, Brave, Startpage, Wikipedia) and
-// aggregates the results, with its own mature bot-avoidance logic (header
-// handling, rate limiting, engine rotation) that we don't have to build or
-// debug here.
+// Primary search source. Calls our own self-hosted metasearch engine
+// instead of scraping Google/DuckDuckGo directly from this backend. Our
+// metasearch instance queries multiple upstream engines itself (Google,
+// Bing, DuckDuckGo, Brave, Startpage, Wikipedia) and aggregates the
+// results, with its own mature bot-avoidance logic (header handling, rate
+// limiting, engine rotation) that we don't have to build or debug here.
+//
+// [Which specific metasearch software/vendor we run is intentionally not
+// named in this public showcase.]
 //
 // HONEST LIMITS (documented, not hidden):
-// - SearXNG still scrapes the same underlying engines under the hood. It
-//   reduces the blocking problem through better engineering, it does not
-//   make it disappear — individual upstream engines (Brave, Startpage, DDG)
-//   can still rate-limit or CAPTCHA-block our SearXNG instance under heavy
-//   sustained traffic, same as our own direct scrapers could.
+// - Our metasearch instance still scrapes the same underlying engines under
+//   the hood. It reduces the blocking problem through better engineering,
+//   it does not make it disappear — individual upstream engines (Brave,
+//   Startpage, DDG) can still rate-limit or CAPTCHA-block our instance
+//   under heavy sustained traffic, same as our own direct scrapers could.
 // - This is a single, self-hosted instance with no proxy/IP rotation of its
-//   own beyond what SearXNG does internally across engines.
-// - If SearXNG returns zero results for a query (rather than an error), we
-//   still fall back to the direct-scrape pipeline — SearXNG occasionally
-//   comes back empty on a query even when no engine reported blocked.
+//   own beyond what it does internally across engines.
+// - If it returns zero results for a query (rather than an error), we
+//   still fall back to the direct-scrape pipeline — it occasionally comes
+//   back empty on a query even when no engine reported blocked.
 
 import { logger } from "./logger.js";
 
-const SEARXNG_BASE_URL = process.env.SEARXNG_BASE_URL || "https://your-searxng-instance.example.com"; // [REDACTED — internal infra URL not included in public showcase]
+const META_SEARCH_BASE_URL = process.env.META_SEARCH_BASE_URL || "https://your-meta-search-instance.example.com"; // [REDACTED — internal infra URL not included in public showcase]
 const FETCH_TIMEOUT_MS = 10000;
 const MAX_RESULTS = 8;
 
@@ -38,7 +40,7 @@ function fetchWithTimeout(url, options, timeoutMs) {
 // real bug (2026-07): factual queries like "USD to INR exchange rate" and
 // "who is the UK Prime Minister" were coming back with responses like "the
 // provided source materials were exclusively linguistic in nature" — the
-// query URL had no `categories` restriction, so SearXNG's default "general"
+// query URL had no `categories` restriction, so the default "general"
 // category picked up a dictionary/Wiktionary-style engine alongside real web
 // engines, and that engine's word-definition result was sometimes the only
 // (or dominant) thing that made it into the response.
@@ -59,9 +61,9 @@ function fetchWithTimeout(url, options, timeoutMs) {
 // papers that are (a) topically irrelevant to a business question and (b)
 // frequently direct PDF links, which core/web-fetcher.js explicitly rejects
 // (`Unsupported content-type`) — so these results were silently occupying
-// slots in the SearXNG result count while contributing zero fetchable
-// content, shrinking the EFFECTIVE source pool for exactly the kind of
-// broad business query Phase 2's multi-query expansion targets.
+// result slots while contributing zero fetchable content, shrinking the
+// EFFECTIVE source pool for exactly the kind of broad business query
+// Phase 2's multi-query expansion targets.
 //
 // Fix: pick categories based on the query's own content — a cheap keyword
 // heuristic, not a model call, since "is this business/market-oriented vs
@@ -85,7 +87,7 @@ const SCIENCE_SIGNAL_WORDS = [
 ];
 
 /**
- * Picks a SearXNG category string based on the query's own content. Falls
+ * Picks a search category string based on the query's own content. Falls
  * back to the original flat set (general,news,science) when the query
  * doesn't clearly lean either way — an ambiguous query is exactly the case
  * where keeping "science" available as a safety net (rather than guessing
@@ -125,9 +127,9 @@ function isDictionaryResult(result) {
     return true;
   }
   // Defense in depth: some dictionary engines don't cleanly report their
-  // own name in the `engine` field depending on SearXNG version/config.
-  // A result whose URL host is a known dictionary/reference site is the
-  // same signal by a different route.
+  // own name in the `engine` field depending on instance/config. A result
+  // whose URL host is a known dictionary/reference site is the same signal
+  // by a different route.
   try {
     const host = new URL(result.url).hostname.toLowerCase();
     if (host.includes("wiktionary.org") || host.includes("dictionary.com") || host.includes("thesaurus.com")) {
@@ -140,15 +142,15 @@ function isDictionaryResult(result) {
 }
 
 /**
- * Search via our self-hosted SearXNG instance and return parsed organic
+ * Search via our self-hosted metasearch instance and return parsed organic
  * result links + snippets, in the same shape as googleSearch()/
  * duckDuckGoSearch(): { success, blocked, error, results: [{ url, title, snippet }] }.
  * Always resolves (never throws) — failures return { success: false, error }
  * so callers (live-search.js) can fall back to direct scraping.
  *
  * @param {string} query
- * @param {string|null} [timeRange] - SearXNG's time_range param: "day",
- *   "week", "month", or "year". Optional and defaulting to unset (existing
+ * @param {string|null} [timeRange] - time_range param: "day", "week",
+ *   "month", or "year". Optional and defaulting to unset (existing
  *   behavior, unchanged) — only passed by callers that have already
  *   decided a query needs recency-biased results (e.g. "is this law still
  *   current"). This biases upstream engines' own ranking toward newer
@@ -156,12 +158,12 @@ function isDictionaryResult(result) {
  *   so an evergreen/definitional query asking for it by mistake wouldn't
  *   suddenly come back empty — it would just rank recent pages higher.
  */
-export async function searxngSearch(query, timeRange = null) {
+export async function metaSearchQuery(query, timeRange = null) {
   const categories = selectSearchCategories(query);
   if (categories !== "general,news,science") {
-    logger.info("SearXNG search: category narrowed by query-type heuristic", { query, categories });
+    logger.info("Meta-search: category narrowed by query-type heuristic", { query, categories });
   }
-  let url = `${SEARXNG_BASE_URL}/search?q=${encodeURIComponent(query)}&format=json&categories=${encodeURIComponent(categories)}`;
+  let url = `${META_SEARCH_BASE_URL}/search?q=${encodeURIComponent(query)}&format=json&categories=${encodeURIComponent(categories)}`;
   if (timeRange) {
     url += `&time_range=${encodeURIComponent(timeRange)}`;
   }
@@ -174,11 +176,11 @@ export async function searxngSearch(query, timeRange = null) {
     );
 
     if (!res.ok) {
-      // Our own SearXNG instance rate-limiting/erroring us is a "blocked"
+      // Our own metasearch instance rate-limiting/erroring us is a "blocked"
       // condition worth logging distinctly from upstream-engine failures,
       // since it points at our own instance/limiter config rather than a
       // specific search engine.
-      logger.warn("SearXNG search non-OK response", { status: res.status, query });
+      logger.warn("Meta-search non-OK response", { status: res.status, query });
       return { success: false, blocked: res.status === 429, error: `HTTP ${res.status}`, results: [] };
     }
 
@@ -187,7 +189,7 @@ export async function searxngSearch(query, timeRange = null) {
     const rawResults = data.results || [];
     const dictionaryFiltered = rawResults.filter(isDictionaryResult);
     if (dictionaryFiltered.length > 0) {
-      logger.warn("SearXNG search: filtered out dictionary/translation-engine results", {
+      logger.warn("Meta-search: filtered out dictionary/translation-engine results", {
         query,
         filteredCount: dictionaryFiltered.length,
         filteredEngines: [...new Set(dictionaryFiltered.map(r => r.engine || "unknown"))],
@@ -217,7 +219,7 @@ export async function searxngSearch(query, timeRange = null) {
     }
 
     if (results.length === 0) {
-      logger.warn("SearXNG search: zero results parsed", {
+      logger.warn("Meta-search: zero results parsed", {
         query,
         unresponsiveEngines: data.unresponsive_engines || [],
       });
@@ -225,17 +227,18 @@ export async function searxngSearch(query, timeRange = null) {
       // Always log the per-engine breakdown at info level for visibility,
       // regardless of whether any engine was reported unresponsive — a
       // silent-zero engine wouldn't show up in unresponsiveEngines at all.
-      logger.info("SearXNG search: engine result breakdown", {
+      logger.info("Meta-search: engine result breakdown", {
         query,
         engineCounts,
         unresponsiveEngines: data.unresponsive_engines || [],
       });
 
       if (data.unresponsive_engines && data.unresponsive_engines.length > 0) {
-        // Non-fatal: some upstream engines failed but SearXNG still returned
-        // usable results from the others. Worth logging for visibility into
-        // which engines are currently unreliable, not worth failing the call.
-        logger.warn("SearXNG search: some engines unresponsive, others succeeded", {
+        // Non-fatal: some upstream engines failed but the instance still
+        // returned usable results from the others. Worth logging for
+        // visibility into which engines are currently unreliable, not
+        // worth failing the call.
+        logger.warn("Meta-search: some engines unresponsive, others succeeded", {
           query,
           unresponsiveEngines: data.unresponsive_engines,
         });
@@ -244,7 +247,7 @@ export async function searxngSearch(query, timeRange = null) {
 
     return { success: true, blocked: false, results };
   } catch (e) {
-    logger.error("SearXNG search fetch failed", { error: e.message, query });
+    logger.error("Meta-search fetch failed", { error: e.message, query });
     return { success: false, blocked: false, error: e.name === "AbortError" ? "Timeout" : e.message, results: [] };
   }
 }

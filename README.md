@@ -96,7 +96,7 @@ prompt-engineer and orchestrate that themselves.
 
 - **Backend:** Node.js, Express
 - **AI:** Google Gemini (`@google/genai`), MCP SDK (`@modelcontextprotocol/sdk`)
-- **Search:** self-hosted SearXNG + Playwright/Cheerio for live grounding
+- **Search:** self-hosted metasearch engine + Playwright/Cheerio for live grounding
 - **Database:** Firebase / Firestore
 - **Payments:** Cashfree
 - **Frontend:** vanilla JS/HTML/CSS, deployed on Netlify

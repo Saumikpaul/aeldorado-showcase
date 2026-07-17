@@ -22,25 +22,25 @@
 //      straight back to single-query search with the original searchQuery.
 //      Never blocks or breaks the answer.
 
-import { liveWebSearch, searxngOnlySearch } from "./live-search.js";
+import { liveWebSearch, metaSearchOnlySearch } from "./live-search.js";
 import { generateWithFallback } from "./retry.js";
 import { safeExtractJSON } from "./json-utils.js";
 import { getModelList } from "../agents/agent-utils.js";
 import { logger } from "./logger.js";
 
 // LOAD-REDUCTION FIX (2026-07-07, confirmed via production logs): our
-// self-hosted SearXNG instance visibly struggles under concurrent multi-
+// self-hosted metasearch instance visibly struggles under concurrent multi-
 // query load — logs showed most secondary engines (Brave, DuckDuckGo,
 // Startpage, Wikipedia, Google Scholar) returning "too many requests" or
 // CAPTCHA-suspended on nearly every call once 3+ sub-queries ran in
-// parallel, each itself falling through a 3-engine (SearXNG->Google->DDG)
+// parallel, each itself falling through a 3-engine (metasearch engine->Google->DDG)
 // chain on failure. Worst case: 1 user question could trigger up to
 // MAX_SUBQUERIES x 3 = 12 external search attempts. Capping at 2 sub-queries
-// halves that worst case and keeps concurrent SearXNG load within what a
+// halves that worst case and keeps concurrent metasearch load within what a
 // single free/self-hosted instance can actually sustain, while still
 // covering "genuinely two angles" tasks (the common case per EXPANSION_SYSTEM
 // below) — a task needing true 3-4-way breadth is rare enough that losing it
-// is a better trade than routinely starving the SearXNG instance.
+// is a better trade than routinely starving the metasearch instance.
 const MAX_SUBQUERIES = 2;
 
 // Caps total merged sources across all sub-queries before they're sent to
@@ -160,7 +160,7 @@ function interleaveSourceLists(sourceLists) {
  * @param {string} [params.agentLabel]
  */
 // LOAD-REDUCTION FIX (2026-07-07): lowered from 15s. Production logs show
-// a fully-failing sub-query (SearXNG timeout -> Google CAPTCHA-block ->
+// a fully-failing sub-query (metasearch engine timeout -> Google CAPTCHA-block ->
 // DuckDuckGo timeout) taking 20-25s end to end even before this outer
 // timeout fires — so 15s wasn't actually preventing the slow-failure case
 // it was meant to cap, it wasn't fully waiting either. Since a slow sub-
@@ -186,7 +186,7 @@ const EMPTY_SEARCH_RESULT = { hasLiveData: false, sources: [], attemptedUrls: []
 // nypost.com, reason.com) ahead of on-topic-but-not-dated legal sites,
 // because recency bias alone has no topic constraint. Replaced below with
 // a narrower, safer fix: for the Legal agent specifically, nudge the query
-// toward known-good Indian legal sites via SearXNG's site: OR-group syntax,
+// toward known-good Indian legal sites via the metasearch engine's site: OR-group syntax,
 // rather than biasing all results by date regardless of topic.
 // Site list deliberately avoids government domains (e.g. indiacode.gov.in)
 // despite being the most "authoritative" on paper — .gov.in sites are
@@ -194,7 +194,7 @@ const EMPTY_SEARCH_RESULT = { hasLiveData: false, sources: [], attemptedUrls: []
 // than commercial legal-content sites, which directly works against the
 // actual goal here (fresh, scrapable, low block-rate). These are all
 // lightweight, frequently-updated, HTML-based Indian legal reference/news
-// sites that SearXNG can reliably fetch:
+// sites that the metasearch engine can reliably fetch:
 const LEGAL_SITE_FOCUS = "(site:devgan.in OR site:indiankanoon.org OR site:scconline.com OR site:lawrato.com OR site:vakeel360.com OR site:barandbench.com OR site:livelaw.in)";
 
 // Same reasoning as LEGAL_SITE_FOCUS, applied to Research: confirmed via
@@ -243,10 +243,10 @@ function isResearchAgent(agentLabel) {
 export async function expandedLiveSearch({ task, searchQuery, ai, model, agentLabel = "Agent" }) {
   const plan = await planQueries({ task, ai, model });
 
-  // Multiple sites via OR inside one site: group is standard SearXNG/
+  // Multiple sites via OR inside one site: group is standard metasearch-engine/
   // upstream-engine syntax — this narrows results toward known-authoritative
   // sources without hard-excluding everything else (if none of the listed
-  // sites return anything, SearXNG still returns whatever else matched the
+  // sites return anything, the metasearch engine still returns whatever else matched the
   // rest of the query terms; it isn't a hard site:-only restriction since
   // the OR group is additive to the query, not a replacement for it).
   // Only one focus applies at a time (an agent is either Legal or Research,
@@ -260,7 +260,7 @@ export async function expandedLiveSearch({ task, searchQuery, ai, model, agentLa
   if (!plan.needsExpansion) {
     // QUERY-TIGHTENING FIX (2026-07-07): confirmed via live testing that a
     // long natural-language searchQuery (e.g. a full sentence the user
-    // typed) sent to SearXNG as-is returns weaker/more irrelevant results
+    // typed) sent to the metasearch engine as-is returns weaker/more irrelevant results
     // than a short keyword-dense query on the exact same topic — the
     // EXPANSION_SYSTEM prompt already produces tight 3-8 word queries for
     // the needsExpansion=true branch, but the false branch previously fell
@@ -275,19 +275,19 @@ export async function expandedLiveSearch({ task, searchQuery, ai, model, agentLa
 
   logger.info(`${agentLabel} agent: multi-query search expansion`, { subQueries: plan.queries });
 
-  // LOAD-REDUCTION FIX (2026-07-07): sub-queries use searxngOnlySearch, not
-  // liveWebSearch's full SearXNG->Google->DuckDuckGo fallback chain. Running
+  // LOAD-REDUCTION FIX (2026-07-07): sub-queries use metaSearchOnlySearch, not
+  // liveWebSearch's full metasearch-engine->Google->DuckDuckGo fallback chain. Running
   // N sub-queries in parallel, each independently retrying through all 3
   // engines on failure, is what pushed a single research question to up to
   // MAX_SUBQUERIES x 3 external search attempts and made one slow/failing
   // sub-query take 20+ seconds even after this file's own SUBQUERY_TIMEOUT_MS
   // fires. Redundancy already exists at the sub-query level (2 independent
   // angles); adding a full 3-engine retry chain to EACH one compounds load
-  // without a proportional accuracy gain. If SearXNG alone comes back empty
+  // without a proportional accuracy gain. If the metasearch engine alone comes back empty
   // for a given sub-query, that sub-query simply contributes zero sources —
   // the other sub-quer(y/ies) and the interleave/merge step below absorb it.
   const results = await Promise.allSettled(
-    plan.queries.map(q => withTimeout(searxngOnlySearch({ query: focusedQuery(q) }), SUBQUERY_TIMEOUT_MS, EMPTY_SEARCH_RESULT))
+    plan.queries.map(q => withTimeout(metaSearchOnlySearch({ query: focusedQuery(q) }), SUBQUERY_TIMEOUT_MS, EMPTY_SEARCH_RESULT))
   );
 
   const perQuerySourceLists = [];
@@ -312,12 +312,12 @@ export async function expandedLiveSearch({ task, searchQuery, ai, model, agentLa
   let dedupedSources = dedupeSourcesByUrl(interleaved).slice(0, MAX_MERGED_SOURCES);
 
   // SAFETY NET (2026-07-07): sub-queries deliberately skip the Google/DDG
-  // fallback chain (see searxngOnlySearch above) to reduce load — but that
-  // means if SearXNG itself is briefly down/timing out, ALL sub-queries
+  // fallback chain (see metaSearchOnlySearch above) to reduce load — but that
+  // means if the metasearch instance itself is briefly down/timing out, ALL sub-queries
   // come back empty with zero fallback attempted at all, which is worse
   // than the pre-multi-query single-search behavior. Rather than surfacing
   // "no live data" in that case, fall back once to the ORIGINAL single
-  // searchQuery through the full liveWebSearch chain (SearXNG->Google->DDG)
+  // searchQuery through the full liveWebSearch chain (metasearch engine->Google->DDG)
   // — one full-chain attempt, not per sub-query, so this only adds load in
   // the specific case where the lighter path already came back with
   // nothing to lose.
@@ -335,7 +335,7 @@ export async function expandedLiveSearch({ task, searchQuery, ai, model, agentLa
   // VISIBILITY FIX (found via live MCP test, 2026-07-07): previously there
   // was no log line at all connecting "these sub-queries ran" to "here's
   // the final merged source count" — a real production case showed all 3
-  // sub-queries individually returning real SearXNG results, then total
+  // sub-queries individually returning real metasearch results, then total
   // silence, then a "no live data found" answer, with no way to tell from
   // logs alone whether the problem was the search stage, the fetch stage,
   // or the merge stage. This makes the merge outcome explicit regardless of

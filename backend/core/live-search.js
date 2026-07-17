@@ -2,30 +2,30 @@
 // Aeldorado by Solanacy Technologies
 //
 // Single entry point agents call to get live web data for a query.
-// Pipeline: query our self-hosted SearXNG instance first (aggregates Google,
+// Pipeline: query our self-hosted metasearch instance first (aggregates Google,
 // Bing, DuckDuckGo, Brave, Startpage with its own bot-avoidance logic) ->
-// if SearXNG itself is unreachable/blocked/empty, fall back to scraping
+// if the metasearch instance itself is unreachable/blocked/empty, fall back to scraping
 // Google directly -> if that's blocked too, fall back to scraping
 // DuckDuckGo directly -> fetch + extract each result page.
 // No Serper/Tavily/Brave/Bing or any external SEARCH API is paid for or
-// required anywhere here — SearXNG is self-hosted, and the direct scrapers
-// remain as a last-resort fallback if our own SearXNG instance is down.
+// required anywhere here — the metasearch engine is self-hosted, and the direct scrapers
+// remain as a last-resort fallback if our own metasearch instance is down.
 
-import { searxngSearch }    from "./searxng-search.js";
+import { metaSearchQuery }  from "./meta-search.js";
 import { googleSearch }     from "./google-search.js";
 import { duckDuckGoSearch } from "./duckduckgo-search.js";
 import { fetchMultiple }    from "./web-fetcher.js";
 import { logger } from "./logger.js";
 
 // PHASE 2 — generic irrelevant-domain filter, applied uniformly to results
-// from ALL THREE engines (SearXNG, Google, DuckDuckGo) at one shared choke
+// from ALL THREE engines (our metasearch engine, Google, DuckDuckGo) at one shared choke
 // point, rather than duplicating a filter inside each engine-specific file.
 //
 // Root cause this addresses (confirmed in production logs, 2026-07): a
 // factual query like "current RBI repo rate" returned real, correct
 // results ALONGSIDE completely irrelevant ones — dictionary.cambridge.org,
-// play.google.com, www.iciba.com — because SearXNG's own
-// isDictionaryResult() filter (searxng-search.js) only catches a narrow
+// play.google.com, www.iciba.com — because the metasearch engine's own
+// isDictionaryResult() filter (meta-search.js) only catches a narrow
 // hostname list (dictionary.com, thesaurus.com, wiktionary.org) and has no
 // concept of "app store" or "translation portal" domains at all, and
 // Google/DuckDuckGo direct-scrape have no such filter whatsoever.
@@ -104,7 +104,7 @@ export function isIrrelevantDomain(url) {
 /**
  * Filters a raw engine result list (shape: [{url, title, snippet, ...}])
  * down to ones worth fetching, logging what got dropped for visibility —
- * mirrors the logging style already established in searxng-search.js's own
+ * mirrors the logging style already established in meta-search.js's own
  * isDictionaryResult filtering, so both filters are equally observable in
  * production logs.
  */
@@ -144,7 +144,7 @@ async function fetchSourcesFromResults(searchResult, engine, query) {
 
   const fetchResults = await fetchMultiple(candidateUrls, 5);
 
-  // publishedDate comes from the search engine's own metadata (SearXNG
+  // publishedDate comes from the search engine's own metadata (the metasearch engine
   // passes this through from upstream engines where available), not from
   // web-fetcher.js's page-fetch — that only extracts body text, it doesn't
   // parse a page's structured data for a publish date. Building a lookup
@@ -165,7 +165,7 @@ async function fetchSourcesFromResults(searchResult, engine, query) {
     // CRITICAL VISIBILITY FIX (found via live MCP test, 2026-07-07): this
     // branch — every one of N candidate URLs failed to fetch usable content
     // — previously had ZERO logging. A real production case hit exactly
-    // this: SearXNG returned real results for all 3 sub-queries (confirmed
+    // this: the metasearch engine returned real results for all 3 sub-queries (confirmed
     // via the "engine result breakdown" logs), yet the final answer was
     // "no live data found", with literally nothing in the logs between the
     // last search-results log and the next unrelated request — this is
@@ -201,10 +201,10 @@ async function fetchSourcesFromResults(searchResult, engine, query) {
 }
 
 /**
- * SearXNG-only variant of the search pipeline, with no Google/DuckDuckGo
+ * Meta-search-only variant of the search pipeline, with no Google/DuckDuckGo
  * fallback chain. Used specifically for multi-query sub-queries (see
  * core/query-expansion.js): when running 2+ sub-queries in parallel, each
- * one falling all the way through SearXNG -> Google -> DuckDuckGo on
+ * one falling all the way through the metasearch engine -> Google -> DuckDuckGo on
  * failure multiplies external request load for comparatively little
  * benefit — the OTHER sub-queries already provide redundancy at the
  * "which angle got covered" level, so a single sub-query's own 3-engine
@@ -213,18 +213,18 @@ async function fetchSourcesFromResults(searchResult, engine, query) {
  * liveWebSearch's full fallback chain unchanged — this is additive, not
  * a replacement.
  */
-export async function searxngOnlySearch({ query, timeRange = null }) {
-  const searxngResult = await searxngSearch(query, timeRange);
+export async function metaSearchOnlySearch({ query, timeRange = null }) {
+  const metaResult = await metaSearchQuery(query, timeRange);
 
-  if (searxngResult.success && !searxngResult.blocked && searxngResult.results.length > 0) {
-    return fetchSourcesFromResults(searxngResult, "searxng", query);
+  if (metaResult.success && !metaResult.blocked && metaResult.results.length > 0) {
+    return fetchSourcesFromResults(metaResult, "meta-search", query);
   }
 
-  logger.warn("Live search (SearXNG-only, sub-query mode): no usable results, not falling back further", {
-    query, blocked: searxngResult.blocked || false, error: searxngResult.error,
+  logger.warn("Live search (Meta-search-only, sub-query mode): no usable results, not falling back further", {
+    query, blocked: metaResult.blocked || false, error: metaResult.error,
   });
 
-  return buildLiveResult({ sources: [], candidateUrls: [], blocked: searxngResult.blocked || false, engine: "none" });
+  return buildLiveResult({ sources: [], candidateUrls: [], blocked: metaResult.blocked || false, engine: "none" });
 }
 
 /**
@@ -232,27 +232,27 @@ export async function searxngOnlySearch({ query, timeRange = null }) {
  *
  * @param {object} params
  * @param {string} params.query - The user/task query to find live data for.
- * @param {string|null} [params.timeRange] - Optional SearXNG time_range
- *   ("day"|"week"|"month"|"year"), applied only to the SearXNG leg of this
+ * @param {string|null} [params.timeRange] - Optional metasearch time_range
+ *   ("day"|"week"|"month"|"year"), applied only to the metasearch leg of this
  *   pipeline — the Google/DuckDuckGo direct-scrape fallbacks below have no
  *   equivalent param, so a caller relying on time-biased results should
- *   expect that bias to weaken if SearXNG itself is unavailable and this
+ *   expect that bias to weaken if the metasearch instance itself is unavailable and this
  *   falls through to a fallback engine. Defaults to null (existing
  *   behavior, unchanged) for every caller that doesn't pass it.
  * @returns {Promise<{ hasLiveData: boolean, sources: Array, attemptedUrls: Array, blocked: boolean, engine: string }>}
  */
 export async function liveWebSearch({ query, timeRange = null }) {
-  // ── Primary: self-hosted SearXNG ──────────────────────────────────────
-  const searxngResult = await searxngSearch(query, timeRange);
+  // ── Primary: self-hosted metasearch engine ──────────────────────────────────────
+  const metaResult = await metaSearchQuery(query, timeRange);
 
-  if (searxngResult.success && !searxngResult.blocked && searxngResult.results.length > 0) {
-    return fetchSourcesFromResults(searxngResult, "searxng", query);
+  if (metaResult.success && !metaResult.blocked && metaResult.results.length > 0) {
+    return fetchSourcesFromResults(metaResult, "meta-search", query);
   }
 
-  if (searxngResult.blocked) {
-    logger.warn("Live search: SearXNG blocked/rate-limited, falling back to direct Google scrape", { query });
+  if (metaResult.blocked) {
+    logger.warn("Live search: Meta-search engine blocked/rate-limited, falling back to direct Google scrape", { query });
   } else {
-    logger.warn("Live search: no SearXNG results, falling back to direct Google scrape", { query, error: searxngResult.error });
+    logger.warn("Live search: no meta-search results, falling back to direct Google scrape", { query, error: metaResult.error });
   }
 
   // ── Fallback: direct Google scrape ────────────────────────────────────
@@ -279,10 +279,10 @@ export async function liveWebSearch({ query, timeRange = null }) {
   // All three sources failed. Only report "blocked" if every source that
   // could be blocked, was — an empty-but-not-blocked result is a different
   // situation for the caller than a genuine block across the board.
-  const allBlocked = (searxngResult.blocked || false) && googleResult.blocked && ddgResult.blocked;
-  logger.error("Live search: SearXNG, Google, and DuckDuckGo all failed", {
+  const allBlocked = (metaResult.blocked || false) && googleResult.blocked && ddgResult.blocked;
+  logger.error("Live search: meta-search engine, Google, and DuckDuckGo all failed", {
     query,
-    searxngError: searxngResult.error,
+    metaSearchError: metaResult.error,
     googleError: googleResult.error,
     ddgError: ddgResult.error,
   });
