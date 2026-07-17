@@ -305,12 +305,12 @@ function renderAuthorizePage({ clientId, clientName, redirectUri, state, scope, 
     import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
 
     const firebaseConfig = {
-      apiKey: "AIzaSyB5WaNqeQeoMbCMjy1zboBQyN_oqAx40Mk",
+      apiKey: "YOUR_FIREBASE_API_KEY",
       authDomain: window.location.hostname, // /__/auth/ is proxied on this host → redirect result works
-      projectId: "aeldorado-agentic-era",
-      storageBucket: "aeldorado-agentic-era.firebasestorage.app",
-      messagingSenderId: "171722973831",
-      appId: "1:171722973831:web:5b05e9d5fa382ccd528e22",
+      projectId: "your-project-id",
+      storageBucket: "your-project.firebasestorage.app",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "1:YOUR_SENDER_ID:web:5b05e9d5fa382ccd528e22",
     };
 
     // OAuth params injected server-side — save to sessionStorage so they

@@ -425,7 +425,7 @@ app.listen(PORT, () => {
   // followed by a fallback all the way down to direct Google/DuckDuckGo
   // scraping). Pinging SearXNG's own /healthz keeps it warm without
   // consuming a real search-engine query every 5 minutes.
-  const SEARXNG_PING_URL = `${process.env.SEARXNG_BASE_URL || "https://solanacy-searxng.onrender.com"}/healthz`;
+  const SEARXNG_PING_URL = `${process.env.SEARXNG_BASE_URL || "https://your-searxng-instance.example.com"}/healthz`; // [REDACTED — internal infra URL not included in public showcase]
   const PING_INTERVAL = 5 * 60 * 1000; // 5 minutes
 
   if (IS_PROD) {

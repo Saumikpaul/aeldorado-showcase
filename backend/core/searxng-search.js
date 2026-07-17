@@ -23,7 +23,7 @@
 
 import { logger } from "./logger.js";
 
-const SEARXNG_BASE_URL = process.env.SEARXNG_BASE_URL || "https://solanacy-searxng.onrender.com";
+const SEARXNG_BASE_URL = process.env.SEARXNG_BASE_URL || "https://your-searxng-instance.example.com"; // [REDACTED — internal infra URL not included in public showcase]
 const FETCH_TIMEOUT_MS = 10000;
 const MAX_RESULTS = 8;
 

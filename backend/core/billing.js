@@ -2,7 +2,7 @@
 // Aeldorado by Solanacy Technologies
 //
 // - Tier definitions with 28-day subscription cycles
-// - Developer plan STRICTLY locked to saumikpaul66@gmail.com
+// - Developer plan STRICTLY locked to [REDACTED — admin email not included in public showcase]
 // - Subscription expiry enforcement
 // - Usage tracking (rolling 5-hour / 7-day / 28-day windows — NOT calendar-based)
 
@@ -12,7 +12,7 @@ import { FieldValue } from "firebase-admin/firestore";
 // ── DEVELOPER PLAN EMAIL GUARD ────────────────────────────────────────────────
 // STRICTLY: Only this email can have the developer plan.
 // Any other user with tier:"developer" in DB will be treated as "free".
-export const DEVELOPER_PLAN_EMAIL = "saumikpaul66@gmail.com";
+export const DEVELOPER_PLAN_EMAIL = "[REDACTED — admin email not included in public showcase]";
 
 /**
  * Check if an email is allowed to use the developer plan.

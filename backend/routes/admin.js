@@ -3,7 +3,7 @@
 //
 // Mounted at /v1/admin/* in server.js, behind BOTH dashboardAuth (Firebase
 // token verification) AND requireSuperAdmin (hardcoded email gate). Every
-// route here is implicitly locked to saumikpaul66@gmail.com — see
+// route here is implicitly locked to [REDACTED — admin email not included in public showcase] — see
 // core/admin-auth.js for the enforcement. Do not add auth checks per-route;
 // the router-level mount is the single source of truth so nothing can be
 // added later and accidentally skip the gate.
@@ -322,7 +322,7 @@ adminRouter.get("/admin/errors/recent", async (req, res) => {
  * Search uses the emailLower field (lowercased on every login via
  * ensureUser) with a Firestore range query: `>= prefix` AND `< prefix+\uf8ff`.
  * This is a prefix match only (not substring/fuzzy) — "saum" matches
- * "saumikpaul66@gmail.com" but "paul" alone won't. Users who haven't
+ * "[REDACTED — admin email not included in public showcase]" but "paul" alone won't. Users who haven't
  * logged in since this field was added won't have emailLower set yet and
  * are excluded from search results until their next login (self-healing,
  * no backfill script needed since ensureUser runs on every login).

@@ -9,13 +9,13 @@
 // non-admin sees an immediate message instead of a blank/broken dashboard.
 
 export const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyB5WaNqeQeoMbCMjy1zboBQyN_oqAx40Mk",
-  authDomain: "aeldorado-agentic-era.firebaseapp.com",
-  projectId: "aeldorado-agentic-era",
-  storageBucket: "aeldorado-agentic-era.firebasestorage.app",
-  messagingSenderId: "171722973831",
-  appId: "1:171722973831:web:5b05e9d5fa382ccd528e22",
-  measurementId: "G-KL2LQWJXDC",
+  apiKey: "YOUR_FIREBASE_API_KEY",
+  authDomain: "your-project.firebaseapp.com",
+  projectId: "your-project-id",
+  storageBucket: "your-project.firebasestorage.app",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "1:YOUR_SENDER_ID:web:5b05e9d5fa382ccd528e22",
+  measurementId: "G-YOUR_MEASUREMENT_ID",
 };
 
 export const API_BASE = window.location.hostname === "localhost"

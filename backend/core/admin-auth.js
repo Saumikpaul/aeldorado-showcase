@@ -2,7 +2,7 @@
 // Aeldorado by Solanacy Technologies
 //
 // HARD SECURITY BOUNDARY for the internal admin portal (admin.aeldorado.solanacy.in).
-// Only DEVELOPER_PLAN_EMAIL (saumikpaul66@gmail.com) may pass this gate.
+// Only DEVELOPER_PLAN_EMAIL ([REDACTED — admin email not included in public showcase]) may pass this gate.
 //
 // This is intentionally NOT reused/derived from tier data in Firestore — tier
 // is user-editable state and must never be the source of truth for admin
